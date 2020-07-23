@@ -1,0 +1,22 @@
+.ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
+  border-radius: 4px;
+  height: 35px;
+  width: 100%;
+}
+.ant-select {
+  width: 100%;
+}
+.ant-upload-select-picture-card i {
+  color: #999;
+  font-size: 32px;
+}
+
+.ant-upload-select-picture-card .ant-upload-text {
+  margin-top: 8px;
+  color: #666;
+}
+
+.gou-publish-status-container{
+  display: flex;
+  align-items: center;
+}

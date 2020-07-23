@@ -1,0 +1,105 @@
+.gou-main-img {
+  height: 275px;
+  width: 100%;
+}
+.gou-contact-container {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: #eff3f6;
+}
+.gou-contact-item {
+  margin-top: 20px;
+}
+
+.gou-contact-name-container {
+  display: flex;
+  align-items: center;
+}
+
+.gou-general-detail-container {
+  display: flex;
+  flex-direction: column;
+}
+.gou-general-title {
+  font-size: 26px;
+  font-weight: 500;
+}
+.gou-general-price {
+  font-size: 22px;
+  font-weight: 400;
+}
+.gou-general-others {
+  display: flex;
+  margin-top: 10px;
+}
+.gou-icon {
+  margin-right: 10px;
+}
+.gou-detail-section {
+  margin-bottom: 20px;
+}
+.gou-detail-section-title {
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 50px;
+  border-top: 1px solid #eff3f6;
+}
+
+#map {
+  width: 100%;
+  height:600px;
+  margin-top: 15px;
+  overflow: hidden;
+}
+
+.mapboxgl-marker{
+    position: absolute;
+}
+
+.gou-utility-table{
+    margin-top: 15px;
+    background-color: #eff3f6;
+    padding: 20px
+}
+
+.gou-distance-selector{
+  display: flex;
+  align-items: center;
+}
+
+.pin{
+  width: 30px;
+  height: 30px;
+  border-radius: 50% 50% 50% 0;
+  background: #22b9ff;
+  position: absolute;
+  transform: rotate(-45deg);
+  left: 50%;
+  top: 50%;
+  margin: -20px 0 0 -20px;
+  animation-name: bounce;
+  animation-duration: 1s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.fa-university{
+  transform: rotate(45deg);
+  color:white;
+}
+
+.gou-utility-name{
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.gou-utility-detail-container{
+  margin-top: 5px
+}
+
+.gou-utility-detail-title{
+  font-weight: bold;
+}
+  
