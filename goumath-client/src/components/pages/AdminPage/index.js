@@ -1,8 +1,10 @@
 import React from 'react';
 import axios from 'axios';
-import { Table, Space, Button, Select } from 'antd';
+import swal from 'sweetalert';
+import { withTranslation } from 'react-i18next';
+import { Table, Space, Button, Select, Dropdown, Menu } from 'antd';
 import 'antd/dist/antd.css';
-import './style.css'
+// import './style.css'
 import MobileNavBar from '../../layouts/MobileNavbar'
 import NavBar from '../../layouts/NavBar'
 import AsideBar from '../../layouts/AsideBar'
@@ -10,203 +12,255 @@ import Footer from '../../layouts/Footer'
 
 const { Option } = Select;
 
-class AdminPage extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      data: [],
-      pagination: {
-        current: 1,
-        pageSize: 5,
-        pageSizeOptions: ['5','10', '20', '40', '80', '100'],
-        showSizeChanger: true,
-        total: ''
-      },
-      filters: {
-        type: null,
-        publish_status: null
-      },
-      loading: false,
-    }
-  }
-
-  componentDidMount() {
-    const { pagination, filters } = this.state
-
-    this.fetch({ pagination, filters })
-  }
-
-  fetch = (params = {}) => {
-    console.log(params)
-    console.log(this.state)
-    this.setState({
-      loading: true
-    })
-    axios.get(`http://localhost:8000/my-posts?current=${params.pagination.current}&pageSize=${params.pagination.pageSize}&type=${params.filters.type}&publish_status=${params.filters.publish_status}`).then(data => {
-      console.log(data)
-      this.setState({
-        loading: false,
-        data: data.data.results,
-        pagination: {
-          ...params.pagination,
-          total: data.data.totalCount,
-        },
-        filters: {
-          ...params.filters
+class AdminUpdatePostPage extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            data: [],
+            pagination: {
+                current: 1,
+                pageSize: 5,
+                pageSizeOptions: ['5', '10', '20', '40', '80', '100'],
+                showSizeChanger: true,
+                total: ''
+            },
+            filters: {
+                type: null,
+                publish_status: null
+            },
+            loading: false,
         }
-      });
-    });
-  }
-
-  handleFilterSell = () => {
-    let pagination = {
-      ...this.state.pagination,
-      current: 1
     }
-    let filters = {
-      ...this.state.filters,
-      type: 'sell'
+
+    componentDidMount() {
+        const { pagination, filters } = this.state
+        this.fetch({ pagination, filters })
     }
-    this.fetch({ pagination, filters })
-  }
 
-  handleFilterRent = () => {
-    let pagination = {
-      ...this.state.pagination,
-      current: 1
+    fetch = (params = {}) => {
+        let userId = localStorage.getItem('userId')
+        this.setState({
+            loading: true
+        })
+        axios.get(`http://localhost:8081/post/all-posts?current=${params.pagination.current}&pageSize=${params.pagination.pageSize}&type=${params.filters.type}&publish_status=${params.filters.publish_status}`).then(data => {
+            this.setState({
+                loading: false,
+                data: data.data.results,
+                pagination: {
+                    ...params.pagination,
+                    total: data.data.totalCount,
+                },
+                filters: {
+                    ...params.filters
+                }
+            });
+        });
     }
-    let filters = {
-      ...this.state.filters,
-      type: 'rent'
+
+    handleFilterSell = () => {
+        let pagination = {
+            ...this.state.pagination,
+            current: 1
+        }
+        let filters = {
+            ...this.state.filters,
+            type: 'sell'
+        }
+        this.fetch({ pagination, filters })
     }
-    this.fetch({ pagination, filters })
-  }
 
-  handleClearFilters = () => {
-    let pagination = {
-      ...this.state.pagination,
-      current: 1
+    handleFilterRent = () => {
+        let pagination = {
+            ...this.state.pagination,
+            current: 1
+        }
+        let filters = {
+            ...this.state.filters,
+            type: 'rent'
+        }
+        this.fetch({ pagination, filters })
     }
-    let filters = {
-      type: null,
-      publish_status: null
+
+    handleFilterNeedBuy = () => {
+        let pagination = {
+            ...this.state.pagination,
+            current: 1
+        }
+        let filters = {
+            ...this.state.filters,
+            type: 'need buy'
+        }
+        this.fetch({ pagination, filters })
     }
-    this.fetch({ pagination, filters })
-  }
 
-  handleFilterPublishStatus = (value) => {
-    let pagination = {
-      ...this.state.pagination,
-      current: 1
+    handleFilterNeedRent = () => {
+        let pagination = {
+            ...this.state.pagination,
+            current: 1
+        }
+        let filters = {
+            ...this.state.filters,
+            type: 'need rent'
+        }
+        this.fetch({ pagination, filters })
     }
-    let filters = {
-      ...this.state.filters,
-      publish_status: value
+
+    handleClearFilters = () => {
+        let pagination = {
+            ...this.state.pagination,
+            current: 1
+        }
+        let filters = {
+            type: null,
+            publish_status: null
+        }
+        this.fetch({ pagination, filters })
     }
-    this.fetch({ pagination, filters })
-  }
 
-  handleTableChange = (pagination, filters, sorter) => {
-    this.fetch({
-      sortField: sorter.field,
-      sortOrder: sorter.order,
-      pagination,
-      filters: this.state.filters,
-    });
-  };
+    handleFilterPublishStatus = (value) => {
+        let pagination = {
+            ...this.state.pagination,
+            current: 1
+        }
+        let filters = {
+            ...this.state.filters,
+            publish_status: value
+        }
+        this.fetch({ pagination, filters })
+    }
 
-  render() {
-    let { data, pagination, loading } = this.state
-    let currentPath = this.props.location.pathname
+    handleTableChange = (pagination, filters, sorter) => {
+        this.fetch({
+            sortField: sorter.field,
+            sortOrder: sorter.order,
+            pagination,
+            filters: this.state.filters,
+        });
+    };
 
-    let columns = [
-      {
-        title: 'Loại nhà',
-        dataIndex: 'type',
-        width: '20%',
-        key: 'type',
-      },
-      {
-        title: 'Tiêu đề',
-        dataIndex: 'title',
-        key: 'title'
-      },
-      {
-        title: 'Ngày đăng',
-        dataIndex: 'createdAt',
-        key: 'createdAt'
-      },
-      {
-        title: 'Tình trạng',
-        dataIndex: 'publish_status',
-        key: 'publish_status'
-      },
-      {
-        title: 'Action',
-        dataIndex: 'action',
-        render: (text, record) => (
-          <Space size="middle">
-            <a href="/manage-posts/update"><i class="flaticon-edit"></i></a>
-            <a onClick={() => {
-              console.log('delete')
-            }}><i class="flaticon-delete"></i></a>
-          </Space>
-        ),
-      },
-    ];
+    render() {
+        let { data, pagination, loading } = this.state
+        const { t } = this.props
 
-    return (
-      <>
-        <MobileNavBar />
-        <div className="kt-grid kt-grid--hor kt-grid--root" style={{ height: "100%" }}>
-          <div className="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--ver kt-page" style={{ height: "100%" }}>
-            <AsideBar />
+        let columns = [
+            {
+                title: t('post type'),
+                dataIndex: 'type',
+                key: 'type',
+            },
+            {
+                title: t('category'),
+                dataIndex: 'category',
+                key: 'category',
+            },
+            {
+                title: t('title'),
+                dataIndex: 'title',
+                key: 'title'
+            },
+            {
+                title: t('created at'),
+                dataIndex: 'createdAt',
+                key: 'createdAt'
+            },
+            {
+                title: t('publish status'),
+                dataIndex: 'publish_status',
+                key: 'publish_status'
+            },
+            {
+                title: t('action'),
+                dataIndex: 'action',
+                render: (text, record) => (
+                    <Space size="middle">
+                        <a href={record.type == 'sell' || record.type == 'rent' ? `/manage-posts/update/sell-rent/${record._id}` : `/manage-posts/update/need-buy-rent/${record._id}`}><i class="flaticon-edit"></i></a>
+                        <a onClick={() => {
+                            swal("Do you want to delete this post?", {
+                                buttons: {
+                                    cancel: "Cancel",
+                                    delete: {
+                                        text: "Yes, delete",
+                                        value: "delete",
+                                    },
+                                },
+                            })
+                                .then((value) => {
+                                    if (value == 'delete') {
+                                        axios({
+                                            method: 'delete',
+                                            url: 'http://localhost:8081/post/delete',
+                                            data: { postId: record._id }
+                                        }).then(res => {
+                                            let resData = res.data
+                                            if (resData.status) {
+                                                swal("Deleted!", "Post is deleted!", "success").then(value => {
+                                                    if (value) window.location.reload()
+                                                })
+                                            }
+                                            else {
+                                                swal("Error!", resData.message, "error")
+                                            }
+                                        })
+                                    }
+                                });
+                        }}><i class="flaticon-delete"></i></a>
+                    </Space>
+                ),
+            },
+        ];
+        return (
+            <>
+                <MobileNavBar />
+                <div className="kt-grid kt-grid--hor kt-grid--root" style={{ height: "100%" }}>
+                    <div className="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--ver kt-page" style={{ height: "100%" }}>
+                        <AsideBar />
 
-            <div className="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor kt-wrapper" id="kt_wrapper">
-              <NavBar />
+                        <div className="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor kt-wrapper" id="kt_wrapper">
+                            <NavBar />
 
-              <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
-                <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                  <div className="row">
-                    <div className="col-12">
-                      <div class="kt-portlet" style={{ marginTop: "25px" }}>
-                        <div className="gou-toolbar">
-                          <Button onClick={this.handleFilterSell} className="gou-toolbar-item">Bán</Button>
-                          <Button onClick={this.handleFilterRent} className="gou-toolbar-item">Cho thuê</Button>
-                          <Button className="gou-toolbar-item">Tin cần mua/thuê</Button>
-                          <Select defaultValue="all" onChange={this.handleFilterPublishStatus} className="gou-toolbar-item" style={{width: 120}}>
-                            <Option value="all">Tất cả</Option>
-                            <Option value="pending">Chờ duyệt</Option>
-                            <Option value="approved">Đã duyệt</Option>
-                            <Option value="refused">Bị từ chối</Option>
-                            <Option value="expired">Hết hạn</Option>
-                          </Select>
-                          <Button onClick={this.handleClearFilters} className="gou-toolbar-item">Xoá lọc</Button>
-                          {
-                            currentPath != '/admin' && <Button className="gou-new-post-btn" href="/manage-posts/create">Đăng tin</Button>
-                          }
+                            <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+                                <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+                                    <div className="row">
+                                        <div className="col-12">
+                                            <div class="kt-portlet" style={{ marginTop: "25px" }}>
+                                                <div className="gou-toolbar">
+                                                    <Button onClick={this.handleFilterSell} className="gou-toolbar-item">{t('common:sell')}</Button>
+                                                    <Button onClick={this.handleFilterRent} className="gou-toolbar-item">{t('common:rent')}</Button>
+                                                    <Button onClick={this.handleFilterNeedBuy} className="gou-toolbar-item">{t('common:need buy')}</Button>
+                                                    <Button onClick={this.handleFilterNeedRent} className="gou-toolbar-item">{t('common:need rent')}</Button>
+                                                    <Select defaultValue="null" onChange={this.handleFilterPublishStatus} className="gou-toolbar-item" style={{ width: 120 }}>
+                                                        <Option value="null">{t('common:all')}</Option>
+                                                        <Option value="pending">{t('common:pending')}</Option>
+                                                        <Option value="approved">{t('common:approved')}</Option>
+                                                        <Option value="refused">{t('common:refused')}</Option>
+                                                        <Option value="expired">{t('common:expired')}</Option>
+                                                    </Select>
+                                                    <Button onClick={this.handleClearFilters} className="gou-toolbar-item">{t('common:clear filter')}</Button>
+                                                  
+                                                </div>
+                                                <Table
+                                                    columns={columns}
+                                                    dataSource={data}
+                                                    pagination={pagination}
+                                                    loading={loading}
+                                                    onChange={this.handleTableChange}
+                                                    rowKey={record => record.key}
+                                                    scroll={{ x: 'fit-content' }}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <Footer />
                         </div>
-                        <Table
-                          columns={columns}
-                          dataSource={data}
-                          pagination={pagination}
-                          loading={loading}
-                          onChange={this.handleTableChange}
-                          rowKey={record => record.key}
-                          scroll={{ x: 'fit-content' }}
-                        />
-                      </div>
                     </div>
-                  </div>
                 </div>
-              </div>
-              <Footer />
-            </div>
-          </div>
-        </div>
-      </>
-    )
-  }
+            </>
+        )
+    }
+
 }
 
-export default AdminPage;
+export default withTranslation(['common'])(AdminUpdatePostPage);

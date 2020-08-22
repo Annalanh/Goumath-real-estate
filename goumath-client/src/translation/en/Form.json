@@ -1,0 +1,12 @@
+{
+    "save": "Save",
+    "reset": "Reset",
+    "required": "Required",
+    "invalid phone number": "Invalid phone number",
+    "invalid email": "Invalid email",
+    "invalid password": "Invalid password",
+    "invalidPassword": "Password must have at least 8 characters, one capital letter, one number and one special character",
+    "notMatchPassword": "Password does not match",
+    "Username has already existed": "Username has already existed",
+    "incorrect password": "Incorrect password"
+}

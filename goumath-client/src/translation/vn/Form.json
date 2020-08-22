@@ -1,0 +1,12 @@
+{
+    "save": "Lưu",
+    "reset": "Bỏ thay đổi",
+    "required": "Bắt buộc",
+    "invalid phone number": "Số điện thoại không hợp lệ",
+    "invalid email": "Email không hợp lệ",
+    "invalid password": "Mật khẩu không hợp lệ",
+    "invalidPassword": "Mật khẩu phải dài ít nhất 8 ký tự, chứa ít nhất 1 số, một chữ hoa, một chữ thường, và 1 ký tự đặc biệt",
+    "notMatchPassword": "Mật khẩu không khớp",
+    "Username has already existed": "Tên đăng nhập đã tồn tại",
+    "incorrect password": "Mật khẩu không đúng"
+}

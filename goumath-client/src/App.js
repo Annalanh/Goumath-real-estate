@@ -7,20 +7,21 @@ import LoginPage from './components/auth/Login'
 import SignupPage from './components/auth/Signup'
 import HomePage from './components/pages/HomePage'
 import FilterREPage from './components/pages/FilterREPage'
-import PostDetailPage from './components/pages/PostDetailPage'
+import SellRentPostDetailPage from './components/pages/SellRentPostDetailPage'
+import NeedBuyRentPostDetailPage from './components/pages/NeedBuyRentPostDetailPage'
 import ManagePostsPage from './components/pages/ManagePostsPage'
-import NewPostPage from './components/pages/NewPostPage'
-import UpdatePostPage from './components/pages/UpdatePostPage'
-import SavedPostsPage from './components/pages/SavedPostsPage'
+import NewSellRentPostPage from './components/pages/NewSellRentPostPage'
+import NewNeedBuyRentPostPage from './components/pages/NewNeedBuyRentPostPage'
+import UpdateSellRentPostPage from './components/pages/UpdateSellRentPostPage'
+import UpdateNeedBuyRentPostPage from './components/pages/UpdateNeedBuyRentPostPage'
+import SavedSellRentPostsPage from './components/pages/SavedSellRentPostsPage'
+import SavedNeedBuyRentPostsPage from './components/pages/SavedNeedBuyRentPostsPage'
 import CalculateLoanPage from './components/pages/CalculateLoanPage'
 import ProfilePage from './components/pages/ProfilePage'
 import AdminPage from './components/pages/AdminPage'
 import PredictPricePage from './components/pages/PredictPricePage'
 import StatisticPage from './components/pages/StatisticPage'
-import AdminUpdatePostPage from './components/pages/AdminUpdatePostPage'
 import ErrorPage from './components/pages/Error'
-
-
 
 class App extends React.Component{
   constructor(props){
@@ -30,7 +31,7 @@ class App extends React.Component{
   render(){
     return (
       <>
-        <BrowserRouter>
+        <BrowserRouter forceRefresh={true}>
           <Switch>
             <Route exact path="/login" component={LoginPage}/>
             <Route exact path="/signup" component={SignupPage}/>
@@ -39,15 +40,19 @@ class App extends React.Component{
             <Route exact path="/search" component={FilterREPage}/>
             <Route exact path="/predict" component={PredictPricePage}/>
             <Route exact path="/statistic" component={StatisticPage}/>
+            
             <PrivateRoute exact path="/profile" component={ProfilePage}/>
             <PrivateRoute exact path="/manage-posts" component={ManagePostsPage}/>
-            <PrivateRoute exact path="/manage-posts/create" component={NewPostPage}/>
-            <PrivateRoute exact path="/manage-posts/update" component={UpdatePostPage}/>
-            <PrivateRoute exact path="/saved-posts" component={SavedPostsPage}/>
-            <Route exact path="/detail" component={PostDetailPage}/>
+            <PrivateRoute exact path="/manage-posts/create/sell-rent" component={NewSellRentPostPage}/>
+            <PrivateRoute exact path="/manage-posts/create/need-buy-rent" component={NewNeedBuyRentPostPage}/>
+            <PrivateRoute exact path="/manage-posts/update/sell-rent/:postId" component={UpdateSellRentPostPage}/>
+            <PrivateRoute exact path="/manage-posts/update/need-buy-rent/:postId" component={UpdateNeedBuyRentPostPage}/>
+            <PrivateRoute exact path="/saved-sell-rent-posts" component={SavedSellRentPostsPage}/>
+            <PrivateRoute exact path="/saved-need-buy-rent-posts" component={SavedNeedBuyRentPostsPage}/>
+            <Route exact path="/sell-rent-post/detail/:postId" component={SellRentPostDetailPage}/>
+            <Route exact path="/need-buy-rent-post/detail/:postId" component={NeedBuyRentPostDetailPage}/>
             <Route exact path="/calculate-loan" component={CalculateLoanPage}/>
             <AdminRoute exact path="/admin" component={AdminPage}/>
-            <AdminRoute exact path="/admin/update-post" component={AdminUpdatePostPage}/>
           </Switch>
         </BrowserRouter>
       </>

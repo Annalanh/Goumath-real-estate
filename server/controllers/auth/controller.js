@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const formidable = require('formidable');
 const fs = require('fs')
 const path = require('path')
+let generateUUID = require('../../utils/uuid-generator')
 
 class AuthenticationController {
     login(req, res) {
@@ -16,13 +17,13 @@ class AuthenticationController {
                         username,
                         password
                     }
-                    const token = jwt.sign(payload, 'privateKey', { expiresIn: 600 });
-                    res.send({ status: true, message: 'Signin success', token, username })
+                    const token = jwt.sign(payload, 'privateKey', { expiresIn: 6000 });
+                    res.send({ status: true, message: 'Signin success', token, username, userId: userFound._id })
                 } else {
-                    res.send({ status: false, message: 'Signin fail' })
+                    res.send({ status: false, message: 'wrong username or password' })
                 }
             } else {
-                res.send({ status: false, message: 'Signin fail' })
+                res.send({ status: false, message: 'wrong username or password' })
             }
         })
     }
@@ -36,14 +37,11 @@ class AuthenticationController {
             } = req.query
 
         User.findOne({ username }).then((userFound) => {
-            if (userFound) res.send({ status: false, message: 'Username or email has already existed !' })
+            if (userFound) res.send({ status: false, message: 'Username has already existed' })
             else {
                 let form = formidable({ multiples: true })
 
                 form.parse(req, function (err, fields, files) {
-
-                    console.log('fields', fields)
-
                     if (err) res.send({ status: false, message: "Cannot upload the files!" })
                     else {
                         let avatarPath = '/assets/uploads/default-avatar.png'
@@ -62,8 +60,9 @@ class AuthenticationController {
 
                             fileList.forEach(file => {
                                 let oldPath = file.path;
-                                let newPath = path.join(__dirname, '../../../', `goumath-client/public/assets/uploads/${file.name}`)
-                                avatarPath = `/assets/uploads/${file.name}`
+                                let uuid = generateUUID()
+                                let newPath = path.join(__dirname, '../../../', `goumath-client/public/assets/uploads/${uuid}_${file.name}`)
+                                avatarPath = `/assets/uploads/${uuid}_${file.name}`
 
                                 fs.copyFile(oldPath, newPath, (err) => {
                                     if (err) throw err;
@@ -98,6 +97,20 @@ class AuthenticationController {
                 })
             }
         })
+    }
+    forgotPassword(req, res){
+        let { newPassword, userId } = req.body
+
+        bcrypt.genSalt(saltRounds, function (err, salt) {
+            bcrypt.hash(newPassword, salt, function (err, hash) {
+                User.findOneAndUpdate({ _id: userId }, { $set: {password: hash} }, { new: true }, (err, doc) => {
+                    if (err) res.send({ status: false, message: "k đổi đc" })
+                    else {
+                        res.send({ status: true, doc, message: "new password updated" })
+                    }
+                })
+            });
+        });
     }
 }
 module.exports = new AuthenticationController()

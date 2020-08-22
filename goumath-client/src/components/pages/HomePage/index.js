@@ -1,4 +1,5 @@
 import React from 'react';
+import { withTranslation } from 'react-i18next';
 import { useRouteMatch } from 'react-router-dom';
 import { Select } from 'antd';
 import 'antd/dist/antd.css';
@@ -6,7 +7,7 @@ import './style.css'
 import MobileNavBar from '../../layouts/MobileNavbar'
 import NavBar from '../../layouts/NavBar'
 import AsideBar from '../../layouts/AsideBar'
-import IntroCard from '../../layouts/IntroCard'
+import SellRentIntroCard from '../../layouts/SellRentIntroCard'
 import Footer from '../../layouts/Footer'
 
 const { Option } = Select;
@@ -45,7 +46,7 @@ class HomePage extends React.Component {
                       <div className="col-lg-10">
                       <div className="row gou-filter-container">
                         <div className="col-lg-4  gou-filter-item">
-                          <Select placeholder='Thành phố'>
+                          <Select placeholder='Thành phố' style={{ width: '100%' }}>
                             <Option value="pending">Chờ duyệt</Option>
                             <Option value="approved">Đã duyệt</Option>
                             <Option value="refused">Bị từ chối</Option>
@@ -53,7 +54,7 @@ class HomePage extends React.Component {
                           </Select>
                         </div>
                         <div className="col-lg-4 gou-filter-item">
-                          <Select placeholder='Quận'>
+                          <Select placeholder='Quận' style={{ width: '100%' }}>
                             <Option value="pending">Chờ duyệt</Option>
                             <Option value="approved">Đã duyệt</Option>
                             <Option value="refused">Bị từ chối</Option>
@@ -61,7 +62,7 @@ class HomePage extends React.Component {
                           </Select>
                         </div>
                         <div className="col-lg-4 gou-filter-item">
-                          <Select placeholder='Bán'>
+                          <Select placeholder='Bán' style={{ width: '100%' }}>
                             <Option value="pending">Chờ duyệt</Option>
                             <Option value="approved">Đã duyệt</Option>
                           </Select>
@@ -69,7 +70,7 @@ class HomePage extends React.Component {
                       </div>
                       <div className="row gou-filter-container">
                         <div className="col-lg-4 gou-filter-item">
-                          <Select placeholder='Loại nhà đất'>
+                          <Select placeholder='Loại nhà đất' style={{ width: '100%' }}>
                             <Option value="pending">Chờ duyệt</Option>
                             <Option value="approved">Đã duyệt</Option>
                             <Option value="refused">Bị từ chối</Option>
@@ -77,7 +78,7 @@ class HomePage extends React.Component {
                           </Select>
                         </div>
                         <div className="col-lg-4 gou-filter-item">
-                          <Select placeholder='Giá'>
+                          <Select placeholder='Giá' style={{ width: '100%' }}>
                             <Option value="pending">Chờ duyệt</Option>
                             <Option value="approved">Đã duyệt</Option>
                             <Option value="refused">Bị từ chối</Option>
@@ -85,7 +86,7 @@ class HomePage extends React.Component {
                           </Select>
                         </div>
                         <div className="col-lg-4 gou-filter-item">
-                          <Select placeholder='Diện tích'>
+                          <Select placeholder='Diện tích' style={{ width: '100%' }}>
                             <Option value="pending">Chờ duyệt</Option>
                             <Option value="approved">Đã duyệt</Option>
                           </Select>
@@ -105,19 +106,13 @@ class HomePage extends React.Component {
                     <div class="col-12 gou-card-list-title" style={{ marginBottom: "20px" }}>Tin thuê cho bạn</div>
                   </div>
                   <div className="row">
-                    <IntroCard />
-                    <IntroCard />
-                    <IntroCard />
-                    <IntroCard />
+                
                   </div>
                   <div className="row">
                     <div class="col-12 gou-card-list-title" style={{ marginBottom: "20px" }}>Tin bán cho bạn</div>
                   </div>
                   <div className="row">
-                    <IntroCard />
-                    <IntroCard />
-                    <IntroCard />
-                    <IntroCard />
+                    
                   </div>
                 </div>
 

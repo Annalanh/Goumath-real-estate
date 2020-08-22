@@ -1,4 +1,5 @@
 import React from 'react';
+import { withTranslation } from 'react-i18next';
 import './style.css'
 import { Formik } from 'formik';
 import { Select, Table, Space } from 'antd';

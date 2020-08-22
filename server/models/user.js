@@ -13,7 +13,7 @@ const userSchema = new Schema({
     avatar: { type: String},
     is_admin : { type : Boolean, default : false },
     my_post: [{ type: Schema.Types.ObjectId, ref: 'Post' }],
-    favorite_post: [{ type: Schema.Types.ObjectId, ref: 'Post' }]
+    favorite_posts: [{ type: Schema.Types.ObjectId, ref: 'Post' }]
 })
 
 module.exports = mongoose.model('User',userSchema);

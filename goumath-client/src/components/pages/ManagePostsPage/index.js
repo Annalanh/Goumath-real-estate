@@ -1,6 +1,8 @@
 import React from 'react';
 import axios from 'axios';
-import { Table, Space, Button, Select } from 'antd';
+import swal from 'sweetalert';
+import { withTranslation } from 'react-i18next';
+import { Table, Space, Button, Select, Dropdown, Menu } from 'antd';
 import 'antd/dist/antd.css';
 import './style.css'
 import MobileNavBar from '../../layouts/MobileNavbar'
@@ -18,7 +20,7 @@ class ManagePostsPage extends React.Component {
       pagination: {
         current: 1,
         pageSize: 5,
-        pageSizeOptions: ['5','10', '20', '40', '80', '100'],
+        pageSizeOptions: ['5', '10', '20', '40', '80', '100'],
         showSizeChanger: true,
         total: ''
       },
@@ -32,18 +34,15 @@ class ManagePostsPage extends React.Component {
 
   componentDidMount() {
     const { pagination, filters } = this.state
-
     this.fetch({ pagination, filters })
   }
 
   fetch = (params = {}) => {
-    console.log(params)
-    console.log(this.state)
+    let userId = localStorage.getItem('userId')
     this.setState({
       loading: true
     })
-    axios.get(`http://localhost:8000/my-posts?current=${params.pagination.current}&pageSize=${params.pagination.pageSize}&type=${params.filters.type}&publish_status=${params.filters.publish_status}`).then(data => {
-      console.log(data)
+    axios.get(`http://localhost:8081/post/my-posts?current=${params.pagination.current}&pageSize=${params.pagination.pageSize}&type=${params.filters.type}&publish_status=${params.filters.publish_status}&userId=${userId}`).then(data => {
       this.setState({
         loading: false,
         data: data.data.results,
@@ -78,6 +77,30 @@ class ManagePostsPage extends React.Component {
     let filters = {
       ...this.state.filters,
       type: 'rent'
+    }
+    this.fetch({ pagination, filters })
+  }
+
+  handleFilterNeedBuy = () => {
+    let pagination = {
+      ...this.state.pagination,
+      current: 1
+    }
+    let filters = {
+      ...this.state.filters,
+      type: 'need buy'
+    }
+    this.fetch({ pagination, filters })
+  }
+
+  handleFilterNeedRent = () => {
+    let pagination = {
+      ...this.state.pagination,
+      current: 1
+    }
+    let filters = {
+      ...this.state.filters,
+      type: 'need rent'
     }
     this.fetch({ pagination, filters })
   }
@@ -117,37 +140,84 @@ class ManagePostsPage extends React.Component {
 
   render() {
     let { data, pagination, loading } = this.state
+    const { t } = this.props
+
+    const uploadMenu = (
+      <Menu>
+        <Menu.Item>
+          <a target="_blank" rel="noopener noreferrer" href="/manage-posts/create/sell-rent">
+            {t('common:sell')}/{t('common:rent')}
+          </a>
+        </Menu.Item>
+        <Menu.Item>
+          <a target="_blank" rel="noopener noreferrer" href="/manage-posts/create/need-buy-rent">
+            {t('common:need buy')}/{t('common:need rent')}
+          </a>
+        </Menu.Item>
+      </Menu>
+    );
 
     let columns = [
       {
-        title: 'Loại nhà',
+        title: t('post type'),
         dataIndex: 'type',
-        width: '20%',
         key: 'type',
       },
       {
-        title: 'Tiêu đề',
+        title: t('category'),
+        dataIndex: 'category',
+        key: 'category',
+      },
+      {
+        title: t('title'),
         dataIndex: 'title',
         key: 'title'
       },
       {
-        title: 'Ngày đăng',
+        title: t('created at'),
         dataIndex: 'createdAt',
         key: 'createdAt'
       },
       {
-        title: 'Tình trạng',
+        title: t('publish status'),
         dataIndex: 'publish_status',
         key: 'publish_status'
       },
       {
-        title: 'Action',
+        title: t('action'),
         dataIndex: 'action',
         render: (text, record) => (
           <Space size="middle">
-            <a href="/manage-posts/update"><i class="flaticon-edit"></i></a>
+            <a href={record.type == 'sell' || record.type == 'rent'?`/manage-posts/update/sell-rent/${record._id}`:`/manage-posts/update/need-buy-rent/${record._id}`}><i class="flaticon-edit"></i></a>
             <a onClick={() => {
-              console.log('delete')
+              swal("Do you want to delete this post?", {
+                buttons: {
+                  cancel: "Cancel",
+                  delete: {
+                    text: "Yes, delete",
+                    value: "delete",
+                  },
+                },
+              })
+                .then((value) => {
+                  if (value == 'delete') {
+                    axios({
+                      method: 'delete',
+                      url: 'http://localhost:8081/post/delete',
+                      data: { postId: record._id }
+                    }).then(res => {
+                      let resData = res.data
+                      if (resData.status) {
+                        swal("Deleted!", "Post is deleted!", "success").then(value => {
+                          if (value) window.location.reload()
+                        })
+                      }
+                      else {
+                        swal("Error!", resData.message, "error")
+                      }
+                    })
+                  }
+                });
             }}><i class="flaticon-delete"></i></a>
           </Space>
         ),
@@ -170,18 +240,21 @@ class ManagePostsPage extends React.Component {
                     <div className="col-12">
                       <div class="kt-portlet" style={{ marginTop: "25px" }}>
                         <div className="gou-toolbar">
-                          <Button onClick={this.handleFilterSell} className="gou-toolbar-item">Bán</Button>
-                          <Button onClick={this.handleFilterRent} className="gou-toolbar-item">Cho thuê</Button>
-                          <Button className="gou-toolbar-item">Tin cần mua/thuê</Button>
-                          <Select defaultValue="all" onChange={this.handleFilterPublishStatus} className="gou-toolbar-item" style={{width: 120}}>
-                            <Option value="all">Tất cả</Option>
-                            <Option value="pending">Chờ duyệt</Option>
-                            <Option value="approved">Đã duyệt</Option>
-                            <Option value="refused">Bị từ chối</Option>
-                            <Option value="expired">Hết hạn</Option>
+                          <Button onClick={this.handleFilterSell} className="gou-toolbar-item">{t('common:sell')}</Button>
+                          <Button onClick={this.handleFilterRent} className="gou-toolbar-item">{t('common:rent')}</Button>
+                          <Button onClick={this.handleFilterNeedBuy} className="gou-toolbar-item">{t('common:need buy')}</Button>
+                          <Button onClick={this.handleFilterNeedRent} className="gou-toolbar-item">{t('common:need rent')}</Button>
+                          <Select defaultValue="null" onChange={this.handleFilterPublishStatus} className="gou-toolbar-item" style={{ width: 120 }}>
+                            <Option value="null">{t('common:all')}</Option>
+                            <Option value="pending">{t('common:pending')}</Option>
+                            <Option value="approved">{t('common:approved')}</Option>
+                            <Option value="refused">{t('common:refused')}</Option>
+                            <Option value="expired">{t('common:expired')}</Option>
                           </Select>
-                          <Button onClick={this.handleClearFilters} className="gou-toolbar-item">Xoá lọc</Button>
-                          <Button className="gou-new-post-btn" href="/manage-posts/create">Đăng tin</Button>
+                          <Button onClick={this.handleClearFilters} className="gou-toolbar-item">{t('common:clear filter')}</Button>
+                          <Dropdown overlay={uploadMenu} placement="bottomRight">
+                            <button className="btn gou-new-post-btn">{t('common:upload')}</button>
+                          </Dropdown>
                         </div>
                         <Table
                           columns={columns}
@@ -206,4 +279,4 @@ class ManagePostsPage extends React.Component {
   }
 }
 
-export default ManagePostsPage;
+export default withTranslation(['common'])(ManagePostsPage);

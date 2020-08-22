@@ -47,3 +47,7 @@ export const getUserRole = () => {
 export const setUsername = (username) => {
     return localStorage.setItem('username', username)
 }
+//set userId
+export const setUserId = (userId) => {
+    return localStorage.setItem('userId', userId)
+}

@@ -1,8 +1,10 @@
 import React from 'react';
 import axios from 'axios';
+import swal from 'sweetalert';
+import { withTranslation } from 'react-i18next';
 import { Upload, Modal } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import { login, isLogin, setUserRole, setUsername } from '../../../utils/auth'
+import { login, setUserRole, setUsername, setUserId } from '../../../utils/auth'
 import { validateEmail, validatePhone, validatePassword } from '../../../utils/form-validation'
 import { getBase64 } from '../../../utils/image-process'
 import { Formik } from 'formik';
@@ -46,11 +48,12 @@ class SignupPage extends React.Component {
         // if (isLogin()) {
         // 	this.props.history.push("/")
         // }
+        const { t } = this.props
         const { previewVisible, previewImage, fileList, previewTitle } = this.state;
         const uploadButton = (
             <div>
                 <PlusOutlined />
-                <div className="ant-upload-text">Upload</div>
+                <div className="ant-upload-text">{t('profilePage:choose file')}</div>
             </div>
         );
         return (
@@ -67,8 +70,8 @@ class SignupPage extends React.Component {
                                     </div>
                                     <div>
                                         <div className="kt-login__head">
-                                            <h3 className="kt-login__title">Sign Up</h3>
-                                            <div className="kt-login__desc">Enter your details to create your account:</div>
+                                            <h3 className="kt-login__title">{t('sign up')}</h3>
+                                            <div className="kt-login__desc">{t('enter your details to create your account')}:</div>
                                         </div>
                                         <Formik
                                             initialValues={{ fullname: '', username: '', email: '', phone: '', password: '', rpassword: '' }}
@@ -78,7 +81,7 @@ class SignupPage extends React.Component {
 
                                                 let formData = new FormData()
                                                 let fileList = this.state.fileList
-                                        
+
                                                 fileList.forEach(file => {
                                                     formData.append('uploadedFiles', file.originFileObj)
                                                 })
@@ -87,42 +90,47 @@ class SignupPage extends React.Component {
                                                 axios({
                                                     url: `http://localhost:8081/auth/signup?fullname=${fullname}&username=${username}&email=${email}&phone=${phone}&password=${password}&`,
                                                     method: "POST",
-                                                    data: formData ,
+                                                    data: formData,
                                                     processData: false,
                                                     contentType: false,
                                                 }).then(res => {
-                                                    if(res.status){
-                                                        let resData = res.data
+                                                    let resData = res.data
+                                                    if (resData.status) {
                                                         login(resData.token)
                                                         setUsername(resData.username)
-					                                    setUserRole('admin')
+                                                        setUserId(resData.userId)
+                                                        setUserRole('admin')
                                                         window.location.href = '/'
-                                                    }else{
-                                                        console.log(res.message)
-                                                    }                              
+                                                    } else {
+                                                        
+                                                        swal(t("common:error"), t(`form:${resData.message}`), "error")
+                                                    }
                                                 })
                                             }}
 
                                             validate={(values) => {
                                                 const errors = {};
+                                                const requiredError = t('form:required')
+                                                const invalidPhoneNumber = t('form:invalid phone number')
+                                                const invalidEmail = t('form:invalid email')
+                                                const invalidPassword = t('form:invalidPassword')
+                                                const notMatchPassword = t('form:notMatchPassword')
 
-                                                if (!values.fullname) errors.fullname = 'Bắt buộc';
+                                                if (!values.fullname) errors.fullname = requiredError;
 
-                                                if (!values.username) errors.username = "Bắt buộc";
+                                                if (!values.username) errors.username = requiredError;
 
-                                                if (!values.phone)
-                                                    errors.phone = "Bắt buộc";
-                                                else if (!validatePhone(values.phone)) errors.phone = "Số điện thoại không hợp lệ!";
+                                                if (!values.phone) errors.phone = requiredError;
+                                                else if (!validatePhone(values.phone)) errors.phone = invalidPhoneNumber;
 
+                                                if (!values.email) errors.email = requiredError;
+                                                else if (!validateEmail(values.email)) errors.email = invalidEmail;
 
-                                                if (!values.email) errors.email = 'Bắt buộc';
-                                                else if (!validateEmail(values.email)) errors.email = "Email không hợp lệ!";
+                                                if (!values.password) errors.password = requiredError
+                                                else if (!validatePassword(values.password)) errors.password = invalidPassword
 
-                                                if (!values.password) errors.password = "Bắt buộc"
-                                                else if (!validatePassword(values.password)) errors.password = "Mật khẩu phải dài ít nhất 8 ký tự, chứa ít nhất 1 số, một chữ hoa, một chữ thường, và 1 ký tự đặc biệt"
-
-                                                if (!values.rpassword) errors.rpassword = "Bắt buộc"
-                                                else if (values.rpassword != values.password) errors.rpassword = "Mật khẩu không khớp!"
+                                                if (!values.rpassword) errors.rpassword = requiredError
+                                                else if (values.rpassword != values.password) errors.rpassword = notMatchPassword
 
                                                 return errors;
                                             }}
@@ -146,13 +154,13 @@ class SignupPage extends React.Component {
                                                             onCancel={this.handleCancel}
                                                         >
                                                             <img alt="example" style={{ width: '100%' }} src={previewImage} />
-                                                        </Modal>   
+                                                        </Modal>
                                                     </div>
                                                     <div className="input-group">
                                                         <input
                                                             className="form-control"
                                                             type="text"
-                                                            placeholder="Fullname"
+                                                            placeholder={t('profilePage:fullname')}
                                                             name="fullname"
                                                             value={props.values.fullname}
                                                             onChange={props.handleChange}
@@ -164,7 +172,7 @@ class SignupPage extends React.Component {
                                                         <input
                                                             className="form-control"
                                                             type="text"
-                                                            placeholder="Username"
+                                                            placeholder={t('profilePage:username')}
                                                             name="username"
                                                             value={props.values.username}
                                                             onChange={props.handleChange}
@@ -176,7 +184,7 @@ class SignupPage extends React.Component {
                                                         <input
                                                             className="form-control"
                                                             type="text"
-                                                            placeholder="Email"
+                                                            placeholder={t('profilePage:email')}
                                                             name="email"
                                                             value={props.values.email}
                                                             onChange={props.handleChange}
@@ -188,7 +196,7 @@ class SignupPage extends React.Component {
                                                         <input
                                                             className="form-control"
                                                             type="text"
-                                                            placeholder="Phone"
+                                                            placeholder={t('profilePage:phone')}
                                                             name="phone"
                                                             value={props.values.phone}
                                                             onChange={props.handleChange}
@@ -200,7 +208,7 @@ class SignupPage extends React.Component {
                                                         <input
                                                             className="form-control"
                                                             type="password"
-                                                            placeholder="Password"
+                                                            placeholder={t('profilePage:password')}
                                                             name="password"
                                                             value={props.values.password}
                                                             onChange={props.handleChange}
@@ -212,7 +220,7 @@ class SignupPage extends React.Component {
                                                         <input
                                                             className="form-control"
                                                             type="password"
-                                                            placeholder="Confirm Password"
+                                                            placeholder={t('profilePage:confirm password')}
                                                             name="rpassword"
                                                             value={props.values.rpassword}
                                                             onChange={props.handleChange}
@@ -220,18 +228,8 @@ class SignupPage extends React.Component {
                                                         />
                                                     </div>
                                                     {props.errors.rpassword && props.touched.rpassword && <div className="gou-invalid-feedback">{props.errors.rpassword}</div>}
-                                                    <div className="row kt-login__extra">
-                                                        <div className="col kt-align-left">
-                                                            <label className="kt-checkbox">
-                                                                <input type="checkbox" name="agree" />I Agree the <a href="#" className="kt-link kt-login__link kt-font-bold">terms and conditions</a>.
-                                                    <span></span>
-                                                            </label>
-                                                            <span className="form-text text-muted"></span>
-                                                        </div>
-                                                    </div>
                                                     <div className="kt-login__actions">
-                                                        <button type="submit" id="kt_login_signup_submit" className="btn btn-brand btn-elevate kt-login__btn-primary">Sign Up</button>&nbsp;&nbsp;
-                                                        <button id="kt_login_signup_cancel" className="btn btn-light btn-elevate kt-login__btn-secondary">Cancel</button>
+                                                        <button type="submit" id="kt_login_signup_submit" className="btn btn-brand btn-elevate kt-login__btn-primary">{t('sign up')}</button>&nbsp;&nbsp;
                                                     </div>
                                                 </form>
                                             )}
@@ -248,4 +246,4 @@ class SignupPage extends React.Component {
     }
 }
 
-export default SignupPage;
+export default withTranslation(['authPage', 'profilePage'])(SignupPage);

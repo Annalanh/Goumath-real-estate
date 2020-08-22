@@ -1,5 +1,7 @@
 import React from 'react'
 import axios from 'axios';
+import { withTranslation } from 'react-i18next';
+import swal from 'sweetalert';
 import { Formik } from 'formik';
 import { Upload, Modal, Button } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
@@ -95,6 +97,7 @@ class ProfilePage extends React.Component {
 
     render() {
         const { previewVisible, previewImage, fileList, previewTitle, changePasswordVisible } = this.state;
+        const { t } = this.props
         const uploadButton = (
             <div>
                 <PlusOutlined />
@@ -140,7 +143,7 @@ class ProfilePage extends React.Component {
                                                 <div className="kt-portlet__head">
                                                     <div className="kt-portlet__head-label">
                                                         <h3 className="kt-portlet__head-title">
-                                                            Thông tin của bạn
+                                                            {t('profile')}
                                                         </h3>
                                                     </div>
                                                 </div>
@@ -152,32 +155,42 @@ class ProfilePage extends React.Component {
 
                                                         let formData = new FormData()
                                                         let fileList = this.state.fileList
+                                                        let fileListLength = fileList.length
+                                                        let defaultAvatar = false
 
-                                                        fileList.forEach(file => {
-                                                            formData.append('uploadedFiles', file.originFileObj)
-                                                        })
+                                                        if (fileListLength == 0) {
+                                                            defaultAvatar = true
+                                                        } else {
+                                                            fileList.forEach(file => {
+                                                                formData.append('uploadedFiles', file.originFileObj)
+                                                            })
+                                                        }
 
                                                         let { fullname, username, email, phone, dob, gender, address, role } = values
                                                         let password = this.state.password
 
                                                         console.log(fileList)
+                                                        let userId = localStorage.getItem('userId')
                                                         axios({
-                                                            url: `http://localhost:8081/user/update-profile?fullname=${fullname}&username=${username}&email=${email}&phone=${phone}&password=${password}&dob=${dob}&gender=${gender}&address=${address}&role=${role}`,
+                                                            url: `http://localhost:8081/user/update-profile?fullname=${fullname}&username=${username}&email=${email}&phone=${phone}&password=${password}&dob=${dob}&gender=${gender}&address=${address}&role=${role}&userId=${userId}&defaultAvatar=${defaultAvatar}`,
                                                             method: "POST",
                                                             data: formData,
                                                             processData: false,
                                                             contentType: false,
                                                         }).then(res => {
-                                                            console.log(res)
-                                                            // if (res.status) {
-                                                            //     let resData = res.data
-                                                            //     login(resData.token)
-                                                            //     setUsername(resData.username)
-                                                            //     setUserRole('admin')
-                                                            //     window.location.href = '/'
-                                                            // } else {
-                                                            //     console.log(res.message)
-                                                            // }
+                                                            let resData = res.data
+                                                            if (resData.status) {
+                                                                swal(t("common:success"), t(resData.message), "success")
+                                                                    .then(value => {
+                                                                        if (value) {
+                                                                            localStorage.setItem('username', username)
+                                                                            window.location.reload()
+                                                                        }
+                                                                    })
+
+                                                            } else {
+                                                                swal(t("common:error"), t(`common:${resData.message}`), "error")
+                                                            }
                                                         })
                                                     }}
                                                     validate={(values) => {
@@ -211,6 +224,7 @@ class ProfilePage extends React.Component {
                                                             <div className="kt-portlet__body">
                                                                 <div className='row'>
                                                                     <div className="col-12">
+                                                                        <label>{t('avatar')}</label>
                                                                         <Upload
                                                                             beforeUpload={() => false}
                                                                             listType="picture-card"
@@ -232,7 +246,7 @@ class ProfilePage extends React.Component {
                                                                 </div>
                                                                 <div className="form-group row">
                                                                     <div className="col-lg-6">
-                                                                        <label>Tên đầy đủ:</label>
+                                                                        <label>{t('fullname')}</label>
                                                                         <input
                                                                             type="text"
                                                                             name="fullname"
@@ -244,7 +258,7 @@ class ProfilePage extends React.Component {
                                                                         {props.errors.fullname && props.touched.fullname && <div className="gou-invalid-feedback">{props.errors.fullname}</div>}
                                                                     </div>
                                                                     <div className="col-lg-6">
-                                                                        <label>Tên đăng nhập:</label>
+                                                                        <label>{t('username')}</label>
                                                                         <input
                                                                             type="text"
                                                                             name="username"
@@ -258,7 +272,7 @@ class ProfilePage extends React.Component {
                                                                 </div>
                                                                 <div className="form-group row">
                                                                     <div className="col-lg-6">
-                                                                        <label>Số điện thoại</label>
+                                                                        <label>{t('phone')}</label>
                                                                         <input
                                                                             type="text"
                                                                             name="phone"
@@ -270,7 +284,7 @@ class ProfilePage extends React.Component {
                                                                         {props.errors.phone && props.touched.phone && <div className="gou-invalid-feedback">{props.errors.phone}</div>}
                                                                     </div>
                                                                     <div className="col-lg-6">
-                                                                        <label>Email</label>
+                                                                        <label>{t('email')}</label>
                                                                         <input
                                                                             type="text"
                                                                             name="email"
@@ -284,7 +298,7 @@ class ProfilePage extends React.Component {
                                                                 </div>
                                                                 <div className="form-group row">
                                                                     <div className="col-lg-6">
-                                                                        <label>Ngày sinh</label>
+                                                                        <label>{t('date of birth')}</label>
                                                                         <div>
                                                                             <div className="input-group date">
                                                                                 <input
@@ -304,7 +318,7 @@ class ProfilePage extends React.Component {
                                                                         </div>
                                                                     </div>
                                                                     <div className="col-lg-6">
-                                                                        <label>Giới tính</label>
+                                                                        <label>{t('gender')}</label>
                                                                         <div className="kt-radio-inline">
                                                                             <label className="kt-radio">
                                                                                 <input
@@ -331,7 +345,7 @@ class ProfilePage extends React.Component {
                                                                 </div>
                                                                 <div className="form-group row">
                                                                     <div className="col-lg-6">
-                                                                        <label>Địa chỉ</label>
+                                                                        <label>{t('address')}</label>
                                                                         <input
                                                                             type="text"
                                                                             name="address"
@@ -342,7 +356,7 @@ class ProfilePage extends React.Component {
                                                                         />
                                                                     </div>
                                                                     <div className="col-lg-6">
-                                                                        <label>Vai trò</label>
+                                                                        <label>{t('role')}</label>
                                                                         <div className="kt-radio-inline">
                                                                             <label className="kt-radio">
                                                                                 <input
@@ -368,7 +382,7 @@ class ProfilePage extends React.Component {
                                                                     </div>
                                                                 </div>
                                                                 <a onClick={this.showChangePassword}>
-                                                                    Đổi mật khẩu
+                                                                    {t('change password')}
                                                                 </a>
                                                             </div>
 
@@ -376,8 +390,8 @@ class ProfilePage extends React.Component {
                                                                 <div className="kt-form__actions">
                                                                     <div className="row">
                                                                         <div className="col-lg-6">
-                                                                            <button type="submit" style={{ marginRight: "10px" }} className="btn btn-primary">Lưu thay đổi</button>
-                                                                            <button type="reset" className="btn btn-secondary" onClick={props.handleReset}>Bỏ thay đổi</button>
+                                                                            <button type="submit" style={{ marginRight: "10px" }} className="btn gou-save-btn">{t('form:save')}</button>
+                                                                            <button type="reset" className="btn gou-reset-btn" onClick={props.handleReset}>{t('form:reset')}</button>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -398,14 +412,16 @@ class ProfilePage extends React.Component {
                 </div>
 
                 <Modal
-                    title="Đổi mật khẩu"
+                    title={t('change password')}
                     visible={changePasswordVisible}
                     footer={null}
                     onCancel={this.handleCancelChangePassword}
                 >
                     <Formik
                         initialValues={{ oldPassword: '', newPassword: '' }}
-                        onSubmit={(values, actions) => {
+                        enableReinitialize={true}
+
+                        onSubmit={(values, { resetForm, setSubmitting }) => {
                             let { oldPassword, newPassword } = values
                             axios({
                                 url: 'http://localhost:8081/user/change-password',
@@ -414,9 +430,18 @@ class ProfilePage extends React.Component {
                             }).then(res => {
                                 let resData = res.data
                                 if (resData.status) {
-                                    this.setState({
-                                        password: resData.password
-                                    })
+                                    swal(t("common:success"), t(resData.message), "success")
+                                        .then(value => {
+                                            if (value) {
+                                                resetForm({ values: { oldPassword: '', newPassword: '' } })
+                                                this.setState({
+                                                    password: resData.password,
+                                                    changePasswordVisible: false,
+                                                })
+                                            }
+                                        })
+                                } else {
+                                    swal(t("common:error"), t(`form:${resData.message}`), "error")
                                 }
                             })
                         }}
@@ -424,34 +449,34 @@ class ProfilePage extends React.Component {
                         validate={(values) => {
                             const errors = {};
 
-                            if (!values.newPassword) errors.newPassword = "Bắt buộc"
-                            else if (!validatePassword(values.newPassword)) errors.newPassword = "Mật khẩu phải dài ít nhất 8 ký tự, chứa ít nhất 1 số, một chữ hoa, một chữ thường, và 1 ký tự đặc biệt"
+                            if (!values.newPassword) errors.newPassword = t('form:required')
+                            else if (!validatePassword(values.newPassword)) errors.newPassword = t('form:invalidPassword')
 
                             return errors;
                         }}
                     >
                         {props => (
-                            <form className="kt-form" onSubmit={props.handleSubmit}>
+                            <form className="kt-form" onSubmit={props.handleSubmit} autoComplete="off">
                                 <div className="kt-portlet__body">
                                     <div className="form-group row">
                                         <div className="col-lg-6">
-                                            <label>Mật khẩu hiện tại:</label>
+                                            <label>{t('current password')}:</label>
                                             <input
                                                 type="password"
                                                 name="oldPassword"
                                                 className="form-control"
-                                                value={props.oldPassword}
+                                                value={props.values.oldPassword}
                                                 onChange={props.handleChange}
                                                 onBlur={props.handleBlur}
                                             />
                                         </div>
                                         <div className="col-lg-6">
-                                            <label>Mật khẩu mới:</label>
+                                            <label>{t('new password')}:</label>
                                             <input
                                                 type="password"
                                                 name="newPassword"
                                                 className="form-control"
-                                                value={props.newPassword}
+                                                value={props.values.newPassword}
                                                 onChange={props.handleChange}
                                                 onBlur={props.handleBlur}
                                             />
@@ -463,8 +488,8 @@ class ProfilePage extends React.Component {
                                     <div className="kt-form__actions">
                                         <div className="row">
                                             <div className="col-lg-6">
-                                                <button type="submit" style={{ marginRight: "10px" }} className="btn btn-primary">Lưu thay đổi</button>
-                                                <button type="reset" className="btn btn-secondary" onClick={props.handleReset}>Bỏ thay đổi</button>
+                                                <button type="submit" style={{ marginRight: "10px" }} className="btn gou-save-btn">{t('form:save')}</button>
+                                                <button type="reset" className="btn gou-reset-btn" onClick={props.handleReset}>{t('form:reset')}</button>
                                             </div>
                                         </div>
                                     </div>
@@ -479,4 +504,4 @@ class ProfilePage extends React.Component {
     }
 }
 
-export default ProfilePage;
+export default withTranslation(['profilePage', 'common', 'form'])(ProfilePage);

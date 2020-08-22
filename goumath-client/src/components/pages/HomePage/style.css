@@ -37,7 +37,7 @@
 }
 @media (max-width: 1025px) {
     .gou-filter-item{
-        margin-top:10px
+        margin-top:10px;
     }
     .gou-filter-container{
         margin-top: 0px;

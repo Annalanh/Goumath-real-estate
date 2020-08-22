@@ -1,4 +1,5 @@
 import React from 'react'
+import { withTranslation } from 'react-i18next';
 
 class Footer extends React.Component {
     constructor(props) {

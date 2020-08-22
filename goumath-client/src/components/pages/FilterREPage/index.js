@@ -1,10 +1,11 @@
 import React from 'react';
+import { withTranslation } from 'react-i18next';
 import { Button, Select, Pagination } from 'antd';
 import MobileNavBar from '../../layouts/MobileNavbar'
 import NavBar from '../../layouts/NavBar'
 import AsideBar from '../../layouts/AsideBar'
 import Footer from '../../layouts/Footer'
-import IntroCard from '../../layouts/IntroCard'
+import SellRentIntroCard from '../../layouts/SellRentIntroCard'
 import './style.css'
 
 const { Option } = Select;
@@ -47,14 +48,14 @@ class FilterREPage extends React.Component {
                                         </div>
                                     </div>
                                     <div className="row">
-                                        <IntroCard />
-                                        <IntroCard />
-                                        <IntroCard />
-                                        <IntroCard />
-                                        <IntroCard />
-                                        <IntroCard />
-                                        <IntroCard />
-                                        <IntroCard />
+                                        <SellRentIntroCard />
+                                        <SellRentIntroCard />
+                                        <SellRentIntroCard />
+                                        <SellRentIntroCard />
+                                        <SellRentIntroCard />
+                                        <SellRentIntroCard />
+                                        <SellRentIntroCard />
+                                        <SellRentIntroCard />
                                     </div>
                                     <div className="row">
                                         <Pagination

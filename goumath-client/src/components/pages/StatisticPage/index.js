@@ -1,4 +1,5 @@
 import React from 'react';
+import { withTranslation } from 'react-i18next';
 import Chart from "react-apexcharts";
 import { Select, Tag } from 'antd';
 import 'antd/dist/antd.css';

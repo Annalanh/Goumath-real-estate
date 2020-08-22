@@ -7,13 +7,11 @@ const socketio = require('socket.io')
 const server = http.createServer(app)
 const io = socketio(server)
 const cors = require('cors')
-const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
-
-const User = require('./models/user')
 
 const authRouter = require('./controllers/auth/router')
 const userRouter = require('./controllers/user/router')
+const postRouter = require('./controllers/post/router')
 
 app.use(cors());
 app.options('*', cors());
@@ -37,5 +35,6 @@ mongoose.connect('mongodb://localhost/goumath', {useNewUrlParser: true}, (err) =
  */
 app.use("/auth", authRouter)
 app.use("/user", userRouter)
+app.use("/post", postRouter)
 
 server.listen(process.env.PORT || 8081);

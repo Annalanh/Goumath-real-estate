@@ -7,8 +7,12 @@
 .gou-toolbar-item{
     margin: 0px 5px
 }
-.gou-new-post-btn{
+.gou-new-post-btn-1{
     margin-left: auto;
     background-color: #22b9ff;
+    color: white
+}
+.gou-new-post-btn:hover{
+    opacity: 0.8;
     color: white
 }
