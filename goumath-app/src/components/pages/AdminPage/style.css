@@ -1,0 +1,14 @@
+.gou-toolbar{
+    margin-bottom: 16px; 
+    margin-top: 16px;
+    display: flex
+}
+
+.gou-toolbar-item{
+    margin: 0px 5px
+}
+.gou-new-post-btn{
+    margin-left: auto;
+    background-color: #22b9ff;
+    color: white
+}
