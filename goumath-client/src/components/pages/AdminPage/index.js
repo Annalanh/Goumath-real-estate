@@ -2,9 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import swal from 'sweetalert';
 import { withTranslation } from 'react-i18next';
-import { Table, Space, Button, Select, Dropdown, Menu } from 'antd';
-import 'antd/dist/antd.css';
-// import './style.css'
+import { Table, Space, Button, Select } from 'antd';
 import MobileNavBar from '../../layouts/MobileNavbar'
 import NavBar from '../../layouts/NavBar'
 import AsideBar from '../../layouts/AsideBar'

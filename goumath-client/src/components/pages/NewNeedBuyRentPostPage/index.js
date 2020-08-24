@@ -8,7 +8,6 @@ import swal from 'sweetalert';
 import { withTranslation } from 'react-i18next';
 import { Formik } from 'formik';
 import { Select, Slider } from 'antd';
-import 'antd/dist/antd.css';
 import MobileNavBar from '../../layouts/MobileNavbar'
 import NavBar from '../../layouts/NavBar'
 import AsideBar from '../../layouts/AsideBar'

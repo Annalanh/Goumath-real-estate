@@ -37,7 +37,7 @@ class NavBar extends React.Component {
                 <div className="kt-header__brand kt-grid__item  " id="kt_header_brand">
                     <div className="kt-header__brand-logo">
                         <a href="index.html">
-                            <img alt="Logo" src="/assets/media/logos/logo-6.png" />
+                            <img alt="Logo" src="/assets/gou-icons/logo-6.png" />
                         </a>
                     </div>
                 </div>
@@ -163,20 +163,20 @@ class NavBar extends React.Component {
                     <div className="kt-header__topbar-item kt-header__topbar-item--langs">
                         <div className="kt-header__topbar-wrapper" data-toggle="dropdown" data-offset="10px,0px">
                             <span className="kt-header__topbar-icon kt-header__topbar-icon--brand">
-                                <img className="" src="/assets/media/flags/260-united-kingdom.svg" alt="" />
+                                <img className="" src="/assets/gou-icons/260-united-kingdom.svg" alt="" />
                             </span>
                         </div>
                         <div className="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-anim">
                             <ul className="kt-nav kt-margin-t-10 kt-margin-b-10">
                                 <li className="kt-nav__item kt-nav__item--active">
                                     <a onClick={this.handleEngTrans} className="kt-nav__link">
-                                        <span className="kt-nav__link-icon"><img src="/assets/media/flags/260-united-kingdom.svg" alt="" /></span>
+                                        <span className="kt-nav__link-icon"><img src="/assets/gou-icons/260-united-kingdom.svg" alt="" /></span>
                                         <span className="kt-nav__link-text">{t('english')}</span>
                                     </a>
                                 </li>
                                 <li className="kt-nav__item">
                                     <a onClick={this.handleVNTrans} className="kt-nav__link">
-                                        <span className="kt-nav__link-icon"><img src="/assets/media/flags/220-vietnam.svg" alt="" /></span>
+                                        <span className="kt-nav__link-icon"><img src="/assets/gou-icons/220-vietnam.svg" alt="" /></span>
                                         <span className="kt-nav__link-text">{t('vietnam')}</span>
                                     </a>
                                 </li>
@@ -207,7 +207,7 @@ class NavBar extends React.Component {
                         ) : (
                                 <div className="kt-header__topbar-item" data-toggle="kt-tooltip" data-placement="left" title={t('sign in')}>
                                     <div className="kt-header__topbar-wrapper" data-offset="10px,0px">
-                                        <span onClick={this.handleClickLoginIcon} className="kt-header__topbar-icon kt-header__topbar-icon--success"><img src="/assets/gou-icon/login.png" style={{ width: "50%", height: "50%" }} /></span>
+                                        <span onClick={this.handleClickLoginIcon} className="kt-header__topbar-icon kt-header__topbar-icon--success"><img src="/assets/gou-icons/login.png" style={{ width: "50%", height: "50%" }} /></span>
                                         <span className="kt-hidden kt-badge kt-badge--danger"></span>
                                     </div>
                                 </div>

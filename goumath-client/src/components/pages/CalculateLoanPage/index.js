@@ -1,17 +1,13 @@
 import React from 'react';
-import { withTranslation } from 'react-i18next';
 import './style.css'
 import { Formik } from 'formik';
-import { Select, Table, Space } from 'antd';
-import { PieChart, Pie, Sector, Cell } from 'recharts';
-import 'antd/dist/antd.css';
+import { Table } from 'antd';
+import { PieChart, Pie, Cell } from 'recharts';
 
 import MobileNavBar from '../../layouts/MobileNavbar'
 import NavBar from '../../layouts/NavBar'
 import AsideBar from '../../layouts/AsideBar'
 import Footer from '../../layouts/Footer'
-
-const { Option } = Select;
 
 let columns = [
     {

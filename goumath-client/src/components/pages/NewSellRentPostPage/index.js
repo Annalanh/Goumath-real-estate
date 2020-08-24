@@ -3,10 +3,8 @@ import axios from 'axios';
 import swal from 'sweetalert';
 import { withTranslation } from 'react-i18next';
 import { Formik } from 'formik';
-import { Upload, Modal } from 'antd';
+import { Upload, Modal, Select} from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import { Select } from 'antd';
-import 'antd/dist/antd.css';
 import MobileNavBar from '../../layouts/MobileNavbar'
 import NavBar from '../../layouts/NavBar'
 import AsideBar from '../../layouts/AsideBar'
@@ -171,7 +169,7 @@ class NewSellRentPostPage extends React.Component {
                             actions.setSubmitting(false);
 
                             let formData = new FormData()
-                            let { fileList, lat, lon, province, district, ward, street, house_no, transaction_status, publish_status } = this.state
+                            // let { fileList, lat, lon, province, district, ward, street, house_no, transaction_status, publish_status } = this.state
 
                             fileList.forEach(file => {
                               formData.append('uploadedFiles', file.originFileObj)

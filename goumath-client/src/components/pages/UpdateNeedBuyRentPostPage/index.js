@@ -4,7 +4,6 @@ import swal from 'sweetalert';
 import { withTranslation } from 'react-i18next';
 import { Formik } from 'formik';
 import { Select } from 'antd';
-import 'antd/dist/antd.css';
 import MobileNavBar from '../../layouts/MobileNavbar'
 import NavBar from '../../layouts/NavBar'
 import AsideBar from '../../layouts/AsideBar'
@@ -200,7 +199,7 @@ class UpdateNeedBuyRentPostPage extends React.Component {
                                                         actions.setSubmitting(false);
 
                                                         let formData = new FormData()
-                                                        let { lat, lon, province, district, ward, street, house_no, transaction_status, publish_status } = this.state
+                                                        // let { lat, lon, province, district, ward, street, house_no, transaction_status, publish_status } = this.state
 
                                                         Object.keys(values).forEach(key => {
                                                             formData.append(key, values[key])

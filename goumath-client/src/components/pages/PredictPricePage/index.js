@@ -1,7 +1,6 @@
 import React from 'react';
 import { withTranslation } from 'react-i18next';
 import { Select } from 'antd';
-import 'antd/dist/antd.css';
 import './style.css'
 import mapboxgl from 'mapbox-gl';
 import MobileNavBar from '../../layouts/MobileNavbar'

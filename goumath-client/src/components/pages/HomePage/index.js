@@ -1,13 +1,10 @@
 import React from 'react';
-import { withTranslation } from 'react-i18next';
 import { useRouteMatch } from 'react-router-dom';
 import { Select } from 'antd';
-import 'antd/dist/antd.css';
 import './style.css'
 import MobileNavBar from '../../layouts/MobileNavbar'
 import NavBar from '../../layouts/NavBar'
 import AsideBar from '../../layouts/AsideBar'
-import SellRentIntroCard from '../../layouts/SellRentIntroCard'
 import Footer from '../../layouts/Footer'
 
 const { Option } = Select;

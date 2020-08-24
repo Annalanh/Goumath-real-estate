@@ -15,14 +15,14 @@ class SellRentIntroCard extends React.Component {
     render() {
         let { title, area, price, address, type, list_img, t } = this.props
         let img_url = 'assets/uploads/house-default-avatar.png'
-        if(list_img.length != 0){
+        if(list_img.length !== 0){
             img_url = list_img[0]
         }
 
         return (
             <div className="col-md-3" style={{ padding: "0px 10px" }}>
                 <div className="gou-intro-card" onClick={this.handleClickOnCard}>
-                    <img className="gou-intro-card-img" src={img_url} />
+                    <img alt="picture" className="gou-intro-card-img" src={img_url} />
                     <div className="gou-intro-card-title">{t(`common:${type}`)}</div>
                     <div className="gou-intro-card-des">{title}</div>
                     <div className="gou-intro-card-info">

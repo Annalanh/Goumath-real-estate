@@ -6,7 +6,7 @@ export function generateAddress(listAddress){
         if(listAddress[i]){
             address += listAddress[i]
         }
-        if(i == listAddressLength - 1){
+        if(i === listAddressLength - 1){
             address += "."
         }else{
             address += ', '

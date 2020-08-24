@@ -1,16 +1,11 @@
 import React from 'react';
 import axios from 'axios';
 import { withTranslation } from 'react-i18next';
-import { Select, Carousel, Button } from 'antd';
-import { generateAddress } from '../../../utils/address'
-import 'antd/dist/antd.css';
 import mapboxgl from 'mapbox-gl';
 import MobileNavBar from '../../layouts/MobileNavbar'
 import NavBar from '../../layouts/NavBar'
 import AsideBar from '../../layouts/AsideBar'
 import Footer from '../../layouts/Footer'
-
-const { Option } = Select;
 
 class SellRentPostDetail extends React.Component {
   constructor(props) {

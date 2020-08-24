@@ -1,9 +1,8 @@
 import React from 'react';
 import axios from 'axios';
 import { withTranslation } from 'react-i18next';
-import { Select, Carousel, Button } from 'antd';
+import { Select, Carousel } from 'antd';
 import { generateAddress } from '../../../utils/address'
-import 'antd/dist/antd.css';
 import './style.css'
 import mapboxgl from 'mapbox-gl';
 import MobileNavBar from '../../layouts/MobileNavbar'

@@ -3,9 +3,8 @@ import axios from 'axios';
 import { withTranslation } from 'react-i18next';
 import swal from 'sweetalert';
 import { Formik } from 'formik';
-import { Upload, Modal, Button } from 'antd';
+import { Upload, Modal } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import { login, isLogin, setUserRole, setUsername } from '../../../utils/auth'
 import './style.css'
 import { validateEmail, validatePhone, validatePassword } from '../../../utils/form-validation'
 import { getBase64 } from '../../../utils/image-process'
@@ -158,7 +157,7 @@ class ProfilePage extends React.Component {
                                                         let fileListLength = fileList.length
                                                         let defaultAvatar = false
 
-                                                        if (fileListLength == 0) {
+                                                        if (fileListLength === 0) {
                                                             defaultAvatar = true
                                                         } else {
                                                             fileList.forEach(file => {
@@ -324,7 +323,7 @@ class ProfilePage extends React.Component {
                                                                                 <input
                                                                                     type="radio"
                                                                                     name="gender"
-                                                                                    checked={props.values.gender == 'female'}
+                                                                                    checked={props.values.gender === 'female'}
                                                                                     onChange={() => {
                                                                                         props.setFieldValue('gender', 'female')
                                                                                     }} /> Nữ
@@ -334,7 +333,7 @@ class ProfilePage extends React.Component {
                                                                                 <input
                                                                                     type="radio"
                                                                                     name="gender"
-                                                                                    checked={props.values.gender == 'male'}
+                                                                                    checked={props.values.gender === 'male'}
                                                                                     onChange={() => {
                                                                                         props.setFieldValue('gender', 'male')
                                                                                     }} /> Nam
@@ -362,7 +361,7 @@ class ProfilePage extends React.Component {
                                                                                 <input
                                                                                     type="radio"
                                                                                     name="role"
-                                                                                    checked={props.values.role == 'agent'}
+                                                                                    checked={props.values.role === 'agent'}
                                                                                     onChange={() => {
                                                                                         props.setFieldValue('role', 'agent')
                                                                                     }} /> Môi giới
@@ -372,7 +371,7 @@ class ProfilePage extends React.Component {
                                                                                 <input
                                                                                     type="radio"
                                                                                     name="role"
-                                                                                    checked={props.values.role == 'landholder'}
+                                                                                    checked={props.values.role === 'landholder'}
                                                                                     onChange={() => {
                                                                                         props.setFieldValue('role', 'landholder')
                                                                                     }} /> Chính chủ

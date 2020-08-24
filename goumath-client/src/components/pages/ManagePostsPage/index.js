@@ -3,7 +3,6 @@ import axios from 'axios';
 import swal from 'sweetalert';
 import { withTranslation } from 'react-i18next';
 import { Table, Space, Button, Select, Dropdown, Menu } from 'antd';
-import 'antd/dist/antd.css';
 import './style.css'
 import MobileNavBar from '../../layouts/MobileNavbar'
 import NavBar from '../../layouts/NavBar'
@@ -188,7 +187,7 @@ class ManagePostsPage extends React.Component {
         dataIndex: 'action',
         render: (text, record) => (
           <Space size="middle">
-            <a href={record.type == 'sell' || record.type == 'rent'?`/manage-posts/update/sell-rent/${record._id}`:`/manage-posts/update/need-buy-rent/${record._id}`}><i class="flaticon-edit"></i></a>
+            <a href={record.type === 'sell' || record.type === 'rent'?`/manage-posts/update/sell-rent/${record._id}`:`/manage-posts/update/need-buy-rent/${record._id}`}><i class="flaticon-edit"></i></a>
             <a onClick={() => {
               swal("Do you want to delete this post?", {
                 buttons: {
@@ -200,7 +199,7 @@ class ManagePostsPage extends React.Component {
                 },
               })
                 .then((value) => {
-                  if (value == 'delete') {
+                  if (value === 'delete') {
                     axios({
                       method: 'delete',
                       url: 'http://localhost:8081/post/delete',

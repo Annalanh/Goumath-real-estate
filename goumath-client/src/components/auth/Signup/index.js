@@ -60,12 +60,12 @@ class SignupPage extends React.Component {
             <>
                 <div className="kt-grid kt-grid--ver kt-grid--root kt-page" style={{ height: "100%" }}>
                     <div className="kt-grid kt-grid--hor kt-grid--root  kt-login kt-login--v3 kt-login--signin" id="kt_login">
-                        <div className="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" style={{ backgroundImage: "url(/assets/media/bg/bg-3.jpg)" }}>
+                        <div className="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" style={{ backgroundImage: "url(/assets/gou-imgs/bg-3.jpg)" }}>
                             <div className="kt-grid__item kt-grid__item--fluid kt-login__wrapper">
                                 <div className="kt-login__container">
                                     <div className="kt-login__logo">
                                         <a href="#">
-                                            <img src="/assets/media/logos/logo-5.png" />
+                                            <img src="/assets/gou-icons/logo-5.png" />
                                         </a>
                                     </div>
                                     <div>
@@ -130,7 +130,7 @@ class SignupPage extends React.Component {
                                                 else if (!validatePassword(values.password)) errors.password = invalidPassword
 
                                                 if (!values.rpassword) errors.rpassword = requiredError
-                                                else if (values.rpassword != values.password) errors.rpassword = notMatchPassword
+                                                else if (values.rpassword !== values.password) errors.rpassword = notMatchPassword
 
                                                 return errors;
                                             }}
