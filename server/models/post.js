@@ -14,7 +14,7 @@ const postSchema = new mongoose.Schema({
     ward : { type : String },
     street : { type : String },
     direction: { type: String },   
-    house_no: { type: Number },
+    house_no: { type: String },
     lat : { type : String },
     lon : { type : String },
     radius: { type: Number },

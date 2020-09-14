@@ -3,12 +3,15 @@ import axios from 'axios';
 import { withTranslation } from 'react-i18next';
 import { Select, Carousel } from 'antd';
 import { generateAddress } from '../../../utils/address'
+import showUtility from '../../../utils/showUtility'
+import drawCircle from '../../../utils/drawCircle'
 import './style.css'
 import mapboxgl from 'mapbox-gl';
 import MobileNavBar from '../../layouts/MobileNavbar'
 import NavBar from '../../layouts/NavBar'
 import AsideBar from '../../layouts/AsideBar'
 import Footer from '../../layouts/Footer'
+import { setUserId } from '../../../utils/auth';
 
 const { Option } = Select;
 
@@ -31,6 +34,8 @@ class SellRentPostDetail extends React.Component {
       direction: '',
       lat: '',
       lon: '',
+      radius: 1,
+      displayCircle: true,
       price: '',
       price_unit: '',
       facade: 0,
@@ -44,11 +49,12 @@ class SellRentPostDetail extends React.Component {
       contact_phone: '',
       contact_email: '',
       createdAt: '',
-      author_avatar: ''
+      author_avatar: '',
+      checkedTypes: ['hospital', 'university', 'medical_supply', 'pharmacy', 'veterinary', 'kindergarten', 'school', 'college', 'language_school', 'music_school', 'mall', 'supermarket']
     };
   }
 
-  async componentDidMount() {
+  componentDidMount() {
     let currentLocation = this.props.location.pathname
     let postId = currentLocation.substr(currentLocation.lastIndexOf('/') + 1)
     let userId = localStorage.getItem('userId')
@@ -73,8 +79,8 @@ class SellRentPostDetail extends React.Component {
           num_bedroom: postInfo.num_bedroom,
           num_floor: postInfo.num_floor,
           num_bathroom: postInfo.num_bathroom,
-          lat: postInfo.lat,
-          lon: postInfo.lon,
+          lat: Number(postInfo.lat),
+          lon: Number(postInfo.lon),
           address,
           direction: postInfo.direction,
           price: postInfo.price,
@@ -92,60 +98,103 @@ class SellRentPostDetail extends React.Component {
           createdAt: postInfo.createdAt,
           author_avatar: postInfo.author.avatar
         }, () => {
-          console.log(this.state)
+          let { lat, lon, radius, checkedTypes } = this.state
           mapboxgl.accessToken = 'pk.eyJ1IjoidGhhb2d1bSIsImEiOiJjazJwbHI0eDIwNW82M210b2JnaTBneHY5In0.t4RveeJuHKVJt0RIgFOAGQ';
-          const map = new mapboxgl.Map({
+          this.map = new mapboxgl.Map({
             container: 'map',
-            style: 'https://apis.wemap.asia/vector-tiles/styles/osm-bright/style.json?key=IqzJukzUWpWrcDHJeDpUPLSGndDx',
-            center: [Number(this.state.lon), Number(this.state.lat)],
+            // style: 'https://apis.wemap.asia/vector-tiles/styles/osm-bright/style.json?key=IqzJukzUWpWrcDHJeDpUPLSGndDx',
+            style: 'mapbox://styles/mapbox/streets-v11',
+            center: [lon, lat],
             zoom: 14,
           });
 
-          let hospitalIcon = document.createElement('div');
-          hospitalIcon.innerHTML = `
-          <div class="pin">
-            <i class="fa fa-university"></i>
-          </div>
-          `
+          this.marker = new mapboxgl.Marker().setLngLat([lon, lat]).addTo(this.map);
 
-          let marker1 = new mapboxgl.Marker()
-            .setLngLat([105.7942275, 21.0546768])
-            .addTo(map);
-
-          let marker2 = new mapboxgl.Marker(hospitalIcon)
-            .setLngLat([105.7938183, 21.0476192])
-            .addTo(map);
-
-          let popup = new mapboxgl.Popup({
-            closeButton: false,
-            closeOnClick: false
-          })
-            .setLngLat([105.7938183, 21.0476192])
-            .setHTML(`
-              <div>
-                <div class="gou-utility-name gou-utility-detail-container">Bệnh viện tâm thần</div>
-                <div class="gou-utility-detail-container">
-                  <span class="gou-utility-detail-title">Địa chỉ:</span> 
-                  <span>số 133, đốc ngữ, ba đình, hà nội</span> 
-                </div>
-                <div class="gou-utility-detail-container">
-                  <span class="gou-utility-detail-title">Khoảng cách:</span> 
-                  <span>12 km</span> 
-                </div>
-              </div>`
-            )
-
-          marker2.getElement().addEventListener('mouseenter', () => {
-            popup.addTo(map);
+          this.map.on('load', () => {
+            drawCircle({ lat, lon, radius, map: this.map })
           })
 
-          marker2.getElement().addEventListener('mouseleave', () => {
-            popup.remove();
+          axios({
+            url: `http://localhost:8081/utility/all`,
+            method: "POST",
+            data: { lat, lon, checkedTypes, radius }
+          }).then(res => {
+            let resData = res.data
+            resData.forEach(utility => {
+              showUtility({ pois: utility.point, map: this.map, type: utility.type, poiClick: { lat, lon } })
+            })
           })
         })
       }
     })
   }
+
+  handleShowUtility = (e) => {
+    let { lat, lon, radius } = this.state
+    let currentCheckedTypes = [...this.state.checkedTypes]
+    let type = e.target.name
+    if (!e.target.checked) {
+      let index = currentCheckedTypes.indexOf(type)
+      currentCheckedTypes.splice(index, 1);
+      this.setState({ checkedTypes: currentCheckedTypes }, () => {
+        let markerList = document.getElementsByClassName(type)
+        Array.from(markerList).forEach(marker => {
+          marker.remove()
+        })
+      });
+    } else {
+      axios({
+        url: `http://localhost:8081/utility/one?lon=${lon}&lat=${lat}&type=${type}&radius=${radius}`,
+        method: "GET",
+      }).then(res => {
+        let resData = res.data
+        currentCheckedTypes.push(type)
+        this.setState({ checkedTypes: currentCheckedTypes }, () => {
+          showUtility({ pois: resData, map: this.map, type, poiClick: { lat, lon } })
+        });
+      })
+    }
+  }
+
+  handleChangeRadius = (value) => {
+    value = Number(value)
+    let { lat, lon, displayCircle, checkedTypes } = this.state
+    this.setState({ radius: value }, () => {
+      if (displayCircle) {
+        this.map.removeLayer('circle-fill')
+        this.map.removeSource('circle-fill')
+        this.map.removeLayer('circle-outline')
+        this.map.removeSource('circle-outline')
+      } else {
+        this.setState({ displayCircle: true })
+      }
+
+      if (value != 0) {
+        let radius = value
+        drawCircle({ lat, lon, radius, map: this.map })
+      } else {
+        this.setState({ displayCircle: false })
+      }
+    })
+    checkedTypes.forEach(type => {
+      let markerList = document.getElementsByClassName(type)
+      Array.from(markerList).forEach(marker => {
+        marker.remove()
+      })
+    })
+    axios({
+      url: `http://localhost:8081/utility/all`,
+      method: "POST",
+      data: { lat, lon, checkedTypes, radius: value }
+    }).then(res => {
+      let resData = res.data
+      resData.forEach(utility => {
+        showUtility({ pois: utility.point, map: this.map, type: utility.type, poiClick: { lat, lon } })
+      })
+    })
+
+  }
+
   handleSaveToFavorites = () => {
     let currentLocation = this.props.location.pathname
     let postId = currentLocation.substr(currentLocation.lastIndexOf('/') + 1)
@@ -161,7 +210,7 @@ class SellRentPostDetail extends React.Component {
         this.setState({
           isSaved: true
         })
-      }else{
+      } else {
         console.log(resData.message)
       }
     })
@@ -182,11 +231,12 @@ class SellRentPostDetail extends React.Component {
         this.setState({
           isSaved: false
         })
-      }else{
+      } else {
         console.log(resData.message)
       }
     })
   }
+
   render() {
     const { t } = this.props
     return (
@@ -349,7 +399,7 @@ class SellRentPostDetail extends React.Component {
                                   <h3 class="kt-portlet__head-title">{t('utility map')}</h3>
                                 </div>
                                 <div className="gou-distance-selector">
-                                  <Select defaultValue="1" style={{ width: 100 }} onChange={this.handleChangePublishStatus}>
+                                  <Select defaultValue="1" style={{ width: 100 }} onChange={this.handleChangeRadius}>
                                     <Option value="0.1">100 m</Option>
                                     <Option value="0.2">200 m</Option>
                                     <Option value="0.5">500 m</Option>
@@ -363,14 +413,14 @@ class SellRentPostDetail extends React.Component {
                                 <div className="row">
                                   <div className="col-6">
                                     <label class="kt-checkbox">
-                                      <input type="checkbox" name="utility" value="hospital" />
+                                      <input type="checkbox" name="hospital" onClick={this.handleShowUtility} defaultChecked />
                                       Bệnh viện (10)
                                       <span></span>
                                     </label>
                                   </div>
                                   <div className="col-6">
                                     <label class="kt-checkbox">
-                                      <input type="checkbox" name="university" />
+                                      <input type="checkbox" name="university" onChange={this.handleShowUtility} defaultChecked />
                                         Đại học (10)
                                       <span></span>
                                     </label>
@@ -379,14 +429,14 @@ class SellRentPostDetail extends React.Component {
                                 <div className="row">
                                   <div className="col-6">
                                     <label class="kt-checkbox">
-                                      <input type="checkbox" name="utility" value="medical_supply" />
-                                      Bệnh viện (4)
+                                      <input type="checkbox" name="medical_supply" onClick={this.handleShowUtility} defaultChecked />
+                                      Cơ sở y tế (4)
                                       <span></span>
                                     </label>
                                   </div>
                                   <div className="col-6">
                                     <label class="kt-checkbox">
-                                      <input type="checkbox" name="pharmacy" />
+                                      <input type="checkbox" name="pharmacy" onClick={this.handleShowUtility} defaultChecked />
                                         Nhà thuốc (5)
                                       <span></span>
                                     </label>
@@ -395,14 +445,14 @@ class SellRentPostDetail extends React.Component {
                                 <div className="row">
                                   <div className="col-6">
                                     <label class="kt-checkbox">
-                                      <input type="checkbox" name="utility" value="veterinary" />
+                                      <input type="checkbox" name="veterinary" onClick={this.handleShowUtility} defaultChecked />
                                       Thú y (6)
                                       <span></span>
                                     </label>
                                   </div>
                                   <div className="col-6">
                                     <label class="kt-checkbox">
-                                      <input type="checkbox" name="kindergarten" />
+                                      <input type="checkbox" name="kindergarten" onClick={this.handleShowUtility} defaultChecked />
                                         Mẫu giáo (7)
                                       <span></span>
                                     </label>
@@ -411,14 +461,14 @@ class SellRentPostDetail extends React.Component {
                                 <div className="row">
                                   <div className="col-6">
                                     <label class="kt-checkbox">
-                                      <input type="checkbox" name="utility" value="school" />
+                                      <input type="checkbox" name="school" onClick={this.handleShowUtility} defaultChecked />
                                       Trường học (4)
                                       <span></span>
                                     </label>
                                   </div>
                                   <div className="col-6">
                                     <label class="kt-checkbox">
-                                      <input type="checkbox" name="college" />
+                                      <input type="checkbox" name="college" onClick={this.handleShowUtility} defaultChecked />
                                         Cao đẳng (10)
                                       <span></span>
                                     </label>
@@ -427,14 +477,14 @@ class SellRentPostDetail extends React.Component {
                                 <div className="row">
                                   <div className="col-6">
                                     <label class="kt-checkbox">
-                                      <input type="checkbox" name="utility" value="language_school" />
+                                      <input type="checkbox" name="language_school" onClick={this.handleShowUtility} defaultChecked />
                                       Trung tâm ngoại ngữ (10)
                                       <span></span>
                                     </label>
                                   </div>
                                   <div className="col-6">
                                     <label class="kt-checkbox">
-                                      <input type="checkbox" name="mall" />
+                                      <input type="checkbox" name="mall" onClick={this.handleShowUtility} defaultChecked />
                                         Trung tâm thương mại (1)
                                       <span></span>
                                     </label>
@@ -443,20 +493,19 @@ class SellRentPostDetail extends React.Component {
                                 <div className="row">
                                   <div className="col-6">
                                     <label class="kt-checkbox">
-                                      <input type="checkbox" name="utility" value="supermarket" />
+                                      <input type="checkbox" name="supermarket" onClick={this.handleShowUtility} defaultChecked />
                                       Siêu thị (9)
                                       <span></span>
                                     </label>
                                   </div>
                                   <div className="col-6">
                                     <label class="kt-checkbox">
-                                      <input type="checkbox" name="music_school" />
+                                      <input type="checkbox" name="music_school" onClick={this.handleShowUtility} defaultChecked />
                                       Trung tâm dạy nhạc, mỹ thuật, nấu ăn (10)
                                       <span></span>
                                     </label>
                                   </div>
                                 </div>
-
                               </div>
                             </div>
                           </div>

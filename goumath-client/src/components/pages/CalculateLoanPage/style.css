@@ -26,3 +26,7 @@
     display: flex;
     justify-content: center;
 }
+.gou-total{
+    font-weight: 700;
+    background-color: #d7dfea;
+}

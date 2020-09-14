@@ -10,5 +10,7 @@ router.get('/my-posts', postController.getPostsByUserId)
       .delete('/delete', postController.deletePostById)
       .post('/save', postController.savePost)
       .post('/unsave', postController.unsavePost)
+      .post('/filter-one-district', postController.filterOneDistrict)
+      .post('/filter-many-districts', postController.filterDistricts)
 
 module.exports = router

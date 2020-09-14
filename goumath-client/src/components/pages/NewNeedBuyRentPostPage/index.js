@@ -26,45 +26,24 @@ class NewNeedBuyRentPostPage extends React.Component {
       lat: "21.0289196",
       lon: "105.8358087",
       radius: 2,
-      province: '',
-      district: '',
-      street: '',
       displayCircle: false
     };
   }
 
   componentDidMount = () => {
+    let { lat, lon } = this.state
     mapboxgl.accessToken = 'pk.eyJ1IjoidGhhb2d1bSIsImEiOiJjazJwbHI0eDIwNW82M210b2JnaTBneHY5In0.t4RveeJuHKVJt0RIgFOAGQ';
     this.map = new mapboxgl.Map({
       container: 'map',
       style: 'https://apis.wemap.asia/vector-tiles/styles/osm-bright/style.json?key=IqzJukzUWpWrcDHJeDpUPLSGndDx',
-      center: [Number(this.state.lon), Number(this.state.lat)],
+      center: [Number(lon), Number(lat)],
       zoom: 14,
     });
-    let marker = new mapboxgl.Marker().setLngLat([Number(this.state.lon), Number(this.state.lat)]).addTo(this.map);
+    this.marker = new mapboxgl.Marker().setLngLat([Number(lon), Number(lat)]).addTo(this.map);
     this.map.on('click', (e) => {
       let lat = e.lngLat.lat
       let lon = e.lngLat.lng
-      marker.remove()
-      marker = new mapboxgl.Marker().setLngLat([lon, lat]).addTo(this.map);
-      axios({
-        method: "GET",
-        url: `https://api.dev.geocode.earth/v1/reverse?point.lat=${lat}&point.lon=${lon}&api_key=ge-1e618cf3d7bd023d`
-      }).then(res => {
-        let resData = res.data
-        let features = resData.features
-        if (features.length != 0) {
-          let poiData = features[0].properties
-          let { street, county, region } = poiData
-          this.setState({
-            lat,
-            lon,
-            street: street || '',
-            district: county || '',
-            province: region || ''
-          })
-        }
-      })
+      this.handleClickMap({ lat, lon })
     })
 
     this.map.addControl(
@@ -83,7 +62,28 @@ class NewNeedBuyRentPostPage extends React.Component {
         marker: false
       })
     );
+  }
 
+  handleClickMap = ({ lat, lon }) => {
+    this.marker.remove()
+    this.marker = new mapboxgl.Marker().setLngLat([lon, lat]).addTo(this.map);
+    if (this.state.displayCircle) {
+      let radius = this.state.radius
+      this.map.removeLayer('circle-fill')
+      this.map.removeSource('circle-fill')
+      this.map.removeLayer('circle-outline')
+      this.map.removeSource('circle-outline')
+      this.drawCircle({ lat, lon, radius})
+      this.setState({
+        lat,
+        lon
+      })
+    } else {
+      this.setState({
+        lat,
+        lon,
+      })
+    }
   }
 
   handleChangeRadius = (value) => {
@@ -99,44 +99,48 @@ class NewNeedBuyRentPostPage extends React.Component {
       }
 
       if (value != 0) {
-        let center = turf.point([105.8461673, 21.0304108]);
-        let radius = value;
-        let options = {
-          steps: 80,
-          units: 'kilometers'
-        };
-
-        let circle = turf.circle(center, radius, options);
-        this.map.addLayer({
-          "id": "circle-fill",
-          "type": "fill",
-          "source": {
-            "type": "geojson",
-            "data": circle
-          },
-          "paint": {
-            "fill-color": "pink",
-            "fill-opacity": 0.5
-          }
-        });
-        this.map.addLayer({
-          "id": "circle-outline",
-          "type": "line",
-          "source": {
-            "type": "geojson",
-            "data": circle
-          },
-          "paint": {
-            "line-color": "blue",
-            "line-opacity": 0.5,
-            "line-width": 10,
-            "line-offset": 5
-          }
-        });
+        let { lat, lon, radius } = this.state
+        this.drawCircle({ lat, lon, radius })
       } else {
         this.setState({ displayCircle: false })
       }
     })
+  }
+
+  drawCircle = ({ lat, lon, radius }) => {
+    let center = turf.point([Number(lon), Number(lat)]);
+    let options = {
+      steps: 80,
+      units: 'kilometers'
+    };
+
+    let circle = turf.circle(center, radius, options);
+    this.map.addLayer({
+      "id": "circle-fill",
+      "type": "fill",
+      "source": {
+        "type": "geojson",
+        "data": circle
+      },
+      "paint": {
+        "fill-color": "#c4e8f2",
+        "fill-opacity": 0.5
+      }
+    });
+    this.map.addLayer({
+      "id": "circle-outline",
+      "type": "line",
+      "source": {
+        "type": "geojson",
+        "data": circle
+      },
+      "paint": {
+        "line-color": "#1890ff",
+        "line-opacity": 0.5,
+        "line-width": 10,
+        "line-offset": 5
+      }
+    });
   }
 
   handleChangePublishStatus = (value) => {
@@ -145,21 +149,6 @@ class NewNeedBuyRentPostPage extends React.Component {
 
   handleChangeTransactionStatus = (value) => {
     this.setState({ transaction_status: value })
-  }
-
-  handleChangeProvince = (e) => {
-    let province = e.target.value
-    this.setState({ province })
-  }
-
-  handleChangeDistrict = (e) => {
-    let district = e.target.value
-    this.setState({ district })
-  }
-
-  handleChangeStreet = (e) => {
-    let street = e.target.value
-    this.setState({ street })
   }
 
   render() {
@@ -253,7 +242,7 @@ class NewNeedBuyRentPostPage extends React.Component {
                             actions.setSubmitting(false);
 
                             let formData = new FormData()
-                            let { lat, lon, radius, province, district, street, transaction_status, publish_status } = this.state
+                            let { lat, lon, radius, transaction_status, publish_status } = this.state
 
                             Object.keys(values).forEach(key => {
                               formData.append(key, values[key])
@@ -265,9 +254,6 @@ class NewNeedBuyRentPostPage extends React.Component {
                             formData.append('lat', lat)
                             formData.append('lon', lon)
                             formData.append('radius', radius)
-                            formData.append('province', province)
-                            formData.append('district', district)
-                            formData.append('street', street)
 
                             axios({
                               url: `http://localhost:8081/post/create`,
@@ -460,64 +446,9 @@ class NewNeedBuyRentPostPage extends React.Component {
                                         <Slider marks={marks} defaultValue={0} max={20} onChange={this.handleChangeRadius} />
                                       </div>
                                     </div>
-
                                     <div className="form-group row">
-                                      <div className="col-lg-4">
-                                        <label>{t('common:province')}:</label>
-                                        <input
-                                          className="form-control"
-                                          type="text"
-                                          name="province"
-                                          defaultValue={this.state.province}
-                                          onChange={this.handleChangeProvince}
-                                        />
-                                      </div>
-                                      <div className="col-lg-4">
-                                        <label>{t('common:district')}:</label>
-                                        <input
-                                          className="form-control"
-                                          type="text"
-                                          name="district"
-                                          defaultValue={this.state.district}
-                                          onChange={this.handleChangeDistrict}
-                                        />
-                                      </div>
-                                      <div className="col-lg-4">
-                                        <label>{t('common:ward')}:</label>
-                                        <input
-                                          className="form-control"
-                                          type="text"
-                                          name="ward"
-                                          value={props.values.ward}
-                                          onChange={props.handleChange}
-                                          onBlur={props.handleBlur}
-                                        />
-                                      </div>
-                                    </div>
-                                    <div className="form-group row">
-                                      <div className="col-lg-4">
-                                        <label>{t('common:street')}:</label>
-                                        <input
-                                          className="form-control"
-                                          type="text"
-                                          name="street"
-                                          defaultValue={this.state.street}
-                                          onChange={this.handleChangeStreet}
-                                        />
-                                      </div>
-                                      <div className="col-lg-4">
-                                        <label>{t('common:house no')}:</label>
-                                        <input
-                                          className="form-control"
-                                          type="text"
-                                          name="house_no"
-                                          value={props.values.house_no}
-                                          onChange={props.handleChange}
-                                          onBlur={props.handleBlur}
-                                        />
-                                      </div>
-                                      <div className="col-lg-4">
-                                        <label>{t('common:direction')}:</label>
+                                      <label className="col-lg-3 col-form-label">{t('common:direction')}:</label>
+                                      <div className="col-lg-6">
                                         <Select className='gou-antd-select' value={props.values.direction} onChange={(value) => { props.setFieldValue('direction', value) }} name="direction">
                                           <Option value="north">{t('common:north')}</Option>
                                           <Option value="south">{t('common:south')}</Option>

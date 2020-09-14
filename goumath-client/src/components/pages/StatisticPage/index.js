@@ -1,20 +1,23 @@
 import React from 'react';
+import axios from 'axios';
 import Chart from "react-apexcharts";
 import { Select, Tag } from 'antd';
+import { withTranslation } from 'react-i18next';
 import './style.css'
+import { provinces, districts } from '../../../utils/geoData'
 import MobileNavBar from '../../layouts/MobileNavbar'
 import NavBar from '../../layouts/NavBar'
 import AsideBar from '../../layouts/AsideBar'
 import Footer from '../../layouts/Footer'
 
+
 const { Option } = Select;
-const options = [{ value: 'gold' }, { value: 'lime' }, { value: 'green' }, { value: 'cyan' }];
 
 function tagRender(props) {
     const { label, value, closable, onClose } = props;
 
     return (
-        <Tag color={value} closable={closable} onClose={onClose} style={{ marginRight: 3 }}>
+        <Tag color='gold' closable={closable} onClose={onClose} style={{ marginRight: 3 }}>
             {label}
         </Tag>
     );
@@ -22,8 +25,23 @@ function tagRender(props) {
 
 class StatisticPage extends React.Component {
     constructor(props) {
-        super(props);
+        super(props)
         this.state = {
+            province1: '',
+            district1: '',
+            category1: '',
+            type1: '',
+            month1: '',
+            province2: '',
+            chosenDistricts2: [],
+            category2: '',
+            type2: '',
+            month2: '',
+            province3: '',
+            chosenDistricts3: [],
+            category3: '',
+            type3: '',
+            month3: '',
             options: {
                 chart: {
                     id: "basic-bar",
@@ -31,7 +49,7 @@ class StatisticPage extends React.Component {
                     toolbar: { show: false }
                 },
                 xaxis: {
-                    categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999]
+                    categories: []
                 },
                 colors: ['#FF1654', '#247BA0'],
                 yaxis: [
@@ -81,16 +99,17 @@ class StatisticPage extends React.Component {
                 ],
 
             },
-            series: [{
-                name: "a",
-                data: [4, 5, 5, 6, 5, 7, 8, 10],
-                type: 'line'
-            },
-            {
-                name: "b",
-                data: [300, 400, 450, 500, 490, 600, 700, 910],
-                type: 'bar'
-            },
+            series: [
+                {
+                    name: "a",
+                    data: [],
+                    type: 'line'
+                },
+                {
+                    name: "b",
+                    data: [],
+                    type: 'bar'
+                },
             ],
             options2: {
                 chart: {
@@ -103,22 +122,197 @@ class StatisticPage extends React.Component {
                     categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999]
                 },
                 stroke: {
-                    width: [3,3],
+                    width: [3, 3],
                 },
                 colors: ['#FF1654', '#247BA0'],
             },
-            series2: [{
-                name: "a",
-                data: [40, 50, 50, 60, 50, 70, 80, 100],
+            series2: [
+                {
+                    name: "a",
+                    data: [12, 23, 34, 45, 56, 67, 78, 89, 90]
+                },
+                {
+                    name: "b",
+                    data: [90, 89, 78, 56, 45, 23, 67, 89, 44]
+                }
+            ],
+            options3: {
+                chart: {
+                    id: "basic-line",
+                    stacked: false,
+                    toolbar: { show: false },
+                    type: 'line'
+                },
+                xaxis: {
+                    categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999]
+                },
+                stroke: {
+                    width: [3, 3],
+                },
+                colors: ['#FF1654', '#247BA0'],
             },
-            {
-                name: "b",
-                data: [300, 400, 450, 500, 490, 600, 700, 910],
-            }],
+            series3: [
+                {
+                    name: "a",
+                    data: [12, 23, 34, 45, 56, 67, 78, 89, 90]
+                },
+                {
+                    name: "b",
+                    data: [90, 89, 78, 56, 45, 23, 67, 89, 44]
+                }
+            ],
         };
     }
 
+    handleChangeProvince1 = (value) => {
+        if (value) this.setState({ province1: value, districts1: districts[value] })
+        else this.setState({ province1: value, districts1: [] })
+    }
+    handleChangeDistrict1 = (value) => {
+        this.setState({ district1: value }, () => {
+            let { province1, district1, category1, type1, month1 } = this.state
+            if (province1 && district1 && category1 && type1 && month1) this.showStats1({ province: province1, district: district1, category: category1, type: type1, month: month1 })
+        })
+    }
+    handleChangeCategory1 = (value) => {
+        this.setState({ category1: value }, () => {
+            let { province1, district1, category1, type1, month1 } = this.state
+            if (province1 && district1 && category1 && type1 && month1) this.showStats1({ province: province1, district: district1, category: category1, type: type1, month: month1 })
+        })
+    }
+    handleChangeMonth1 = (value) => {
+        this.setState({ month1: value }, () => {
+            let { province1, district1, category1, type1, month1 } = this.state
+            if (province1 && district1 && category1 && type1 && month1) this.showStats1({ province: province1, district: district1, category: category1, type: type1, month: month1 })
+        })
+    }
+    handleChangeType1 = (e) => {
+        let type1 = e.target.value
+        this.setState({ type1 }, () => {
+            let { province1, district1, category1, type1, month1 } = this.state
+            if (province1 && district1 && category1 && type1 && month1) this.showStats1({ province: province1, district: district1, category: category1, type: type1, month: month1 })
+        })
+    }
+    showStats1 = ({ province, district, category, type, month }) => {
+        axios({
+            url: 'http://localhost:8081/post/filter-one-district',
+            method: 'POST',
+            data: { province, district, category, type, month }
+        }).then(res => {
+            const resData = res.data
+            const newSeries = []
+            this.state.series.forEach((s, index) => {
+                newSeries.push({ name: s.name, data: index == 0 ? resData.avgPrices : resData.postCounts, type: s.type });
+            });
+
+            this.setState({
+                series: newSeries,
+                options: { ...this.state.options, xaxis: { categories: resData.monthList } }
+            })
+
+        })
+    }
+    handleChangeProvince2 = (value) => {
+        let districts2 = districts[value]
+        districts2 = districts2.map(d => { return { value: d } })
+        this.setState({ province2: value, districts2 })
+    }
+    handleChangeDistricts2 = (value) => {
+        this.setState({ chosenDistricts2: value }, () => {
+            let { province2, chosenDistricts2, category2, type2, month2 } = this.state
+            if (province2 && chosenDistricts2.length > 0 && category2 && type2 && month2) this.showStats2({ province: province2, districts: chosenDistricts2, category: category2, type: type2, month: month2 })
+        })
+    }
+    handleChangeCategory2 = (value) => {
+        this.setState({ category2: value }, () => {
+            let { province2, chosenDistricts2, category2, type2, month2 } = this.state
+            if (province2 && chosenDistricts2.length > 0 && category2 && type2 && month2) this.showStats2({ province: province2, districts: chosenDistricts2, category: category2, type: type2, month: month2 })
+        })
+    }
+    handleChangeMonth2 = (value) => {
+        this.setState({ month2: value }, () => {
+            let { province2, chosenDistricts2, category2, type2, month2 } = this.state
+            if (province2 && chosenDistricts2.length > 0 && category2 && type2 && month2) this.showStats2({ province: province2, districts: chosenDistricts2, category: category2, type: type2, month: month2 })
+        })
+    }
+    handleChangeType2 = (e) => {
+        let type2 = e.target.value
+        this.setState({ type2 }, () => {
+            let { province2, chosenDistricts2, category2, type2, month2 } = this.state
+            if (province2 && chosenDistricts2.length > 0 && category2 && type2 && month2) this.showStats2({ province: province2, districts: chosenDistricts2, category: category2, type: type2, month: month2 })
+        })
+    }
+    showStats2 = ({ province, districts, category, type, month }) => {
+        axios({
+            url: 'http://localhost:8081/post/filter-many-districts',
+            method: 'POST',
+            data: { province, districts, category, type, month }
+        }).then(res => {
+            const resData = res.data
+
+            const newSeries2 = []
+            resData.forEach(r => {
+                newSeries2.push({ name: r.district, data: r.avgPrices })
+            })
+            this.setState({
+                series2: newSeries2,
+                options2: { ...this.state.options2, xaxis: { categories: resData[0].monthList } }
+            })
+        })
+    }
+    handleChangeProvince3 = (value) => {
+        let districts3 = districts[value]
+        districts3 = districts3.map(d => { return { value: d } })
+        console.log(districts3)
+        this.setState({ province3: value, districts3 })
+    }
+    handleChangeDistricts3 = (value) => {
+        this.setState({ chosenDistricts3: value }, () => {
+            let { province3, chosenDistricts3, category3, type3, month3 } = this.state
+            if (province3 && chosenDistricts3.length > 0 && category3 && type3 && month3) this.showStats3({ province: province3, districts: chosenDistricts3, category: category3, type: type3, month: month3 })
+        })
+    }
+    handleChangeCategory3 = (value) => {
+        this.setState({ category3: value }, () => {
+            let { province3, chosenDistricts3, category3, type3, month3 } = this.state
+            if (province3 && chosenDistricts3.length > 0 && category3 && type3 && month3) this.showStats3({ province: province3, districts: chosenDistricts3, category: category3, type: type3, month: month3 })
+        })
+    }
+    handleChangeMonth3 = (value) => {
+        this.setState({ month3: value }, () => {
+            let { province3, chosenDistricts3, category3, type3, month3 } = this.state
+            if (province3 && chosenDistricts3.length > 0 && category3 && type3 && month3) this.showStats3({ province: province3, districts: chosenDistricts3, category: category3, type: type3, month: month3 })
+        })
+    }
+    handleChangeType3 = (e) => {
+        let type3 = e.target.value
+        this.setState({ type3 }, () => {
+            let { province3, chosenDistricts3, category3, type3, month3 } = this.state
+            if (province3 && chosenDistricts3.length > 0 && category3 && type3 && month3) this.showStats3({ province: province3, districts: chosenDistricts3, category: category3, type: type3, month: month3 })
+        })
+    }
+    showStats3 = ({ province, districts, category, type, month }) => {
+        axios({
+            url: 'http://localhost:8081/post/filter-many-districts',
+            method: 'POST',
+            data: { province, districts, category, type, month }
+        }).then(res => {
+            const resData = res.data
+
+            const newSeries3 = []
+            resData.forEach(r => {
+                newSeries3.push({ name: r.district, data: r.postCounts })
+            })
+            this.setState({
+                series3: newSeries3,
+                options3: { ...this.state.options3, xaxis: { categories: resData[0].monthList } }
+            })
+        })
+    }
+
     render() {
+        const { t } = this.props
+        let { districts1, districts2, districts3 } = this.state
         return (
             <>
                 <MobileNavBar />
@@ -143,30 +337,45 @@ class StatisticPage extends React.Component {
                                                 <div className="kt-portlet__body">
                                                     <div className="row">
                                                         <div className="col-lg-3">
-                                                            <Select placeholder="Huyện">
-                                                                <Option value="all">Tất cả</Option>
-                                                                <Option value="pending">Chờ duyệt</Option>
-                                                                <Option value="approved">Đã duyệt</Option>
-                                                                <Option value="refused">Bị từ chối</Option>
-                                                                <Option value="expired">Hết hạn</Option>
+                                                            <Select className='gou-antd-select' defaultValue="" onChange={this.handleChangeProvince1}>
+                                                                <Option value="">Tỉnh</Option>
+                                                                {provinces && provinces.map(province => { return (<Option value={province}>{province}</Option>) })}
                                                             </Select>
                                                         </div>
                                                         <div className="col-lg-3">
-                                                            <Select placeholder="Huyện">
-                                                                <Option value="all">Tất cả</Option>
-                                                                <Option value="pending">Chờ duyệt</Option>
-                                                                <Option value="approved">Đã duyệt</Option>
-                                                                <Option value="refused">Bị từ chối</Option>
-                                                                <Option value="expired">Hết hạn</Option>
+                                                            <Select className='gou-antd-select' defaultValue="" onChange={this.handleChangeDistrict1}>
+                                                                <Option value="">Huyện</Option>
+                                                                {districts1 && districts1.map(district => { return (<Option value={district}>{district}</Option>) })}
                                                             </Select>
                                                         </div>
                                                         <div className="col-lg-3">
-                                                            <Select defaultValue="6-months">                                                                <Option value="all">Tất cả</Option>
-                                                                <Option value="3-months">3 tháng</Option>
-                                                                <Option value="6-months">6 tháng</Option>
-                                                                <Option value="9-months">9 tháng</Option>
-                                                                <Option value="1-year">1 năm</Option>
-                                                                <Option value="2-year">2 năm</Option>
+                                                            <Select className='gou-antd-select' defaultValue="" onChange={this.handleChangeCategory1}>
+                                                                <Option value="">Loại</Option>
+                                                                <Option value="apartment">{t('common:apartment')}</Option>
+                                                                <Option value="house">{t('common:house')}</Option>
+                                                                <Option value="mansion">{t('common:mansion')}</Option>
+                                                                <Option value="town-house">{t('common:town house')}</Option>
+                                                                <Option value="ground-project">{t('common:ground project')}</Option>
+                                                                <Option value="frontage-ground">{t('common:frontage ground')}</Option>
+                                                                <Option value="warehouse">{t('common:warehouse')}</Option>
+                                                                <Option value="hotel">{t('common:hotel')}</Option>
+                                                                <Option value="store">{t('common:store')}</Option>
+                                                                <Option value="boarding-house">{t('common:boarding house')}</Option>
+                                                                <Option value="resindental-land">{t('common:resindental land')}</Option>
+                                                                <Option value="in-alley-house">{t('common:in alley house')}</Option>
+                                                                <Option value="shophouse">{t('common:shophouse')}</Option>
+                                                                <Option value="ground">{t('common:ground')}</Option>
+                                                                <Option value="office">{t('common:office')}</Option>
+                                                                <Option value="farmland">{t('common:farmland')}</Option>
+                                                            </Select>
+                                                        </div>
+                                                        <div className="col-lg-3">
+                                                            <Select defaultValue="" onChange={this.handleChangeMonth1}>
+                                                                <Option value="">Tháng</Option>
+                                                                <Option value={3}>3 tháng</Option>
+                                                                <Option value={6}>6 tháng</Option>
+                                                                <Option value={9}>9 tháng</Option>
+                                                                <Option value={12}>1 năm</Option>
                                                             </Select>
                                                         </div>
                                                     </div>
@@ -174,11 +383,11 @@ class StatisticPage extends React.Component {
                                                         <div class="col-lg-6">
                                                             <div class="kt-radio-inline">
                                                                 <label class="kt-radio">
-                                                                    <input type="radio" name="gender" /> Bán
+                                                                    <input type="radio" name="type1" value="sell" onChange={this.handleChangeType1} /> Bán
                                                                     <span></span>
                                                                 </label>
                                                                 <label class="kt-radio">
-                                                                    <input type="radio" name="gender" checked="" /> Cho thuê
+                                                                    <input type="radio" name="type1" value="rent" onChange={this.handleChangeType1} /> Cho thuê
                                                                     <span></span>
                                                                 </label>
                                                             </div>
@@ -209,30 +418,48 @@ class StatisticPage extends React.Component {
                                                 <div className="kt-portlet__body">
                                                     <div className="row">
                                                         <div className="col-lg-3">
-                                                            <Select
-                                                                mode="multiple"
-                                                                tagRender={tagRender}
-                                                                defaultValue={['gold', 'cyan']}
-                                                                style={{ width: '100%' }}
-                                                                options={options}
-                                                            />
-                                                        </div>
-                                                        <div className="col-lg-3">
-                                                            <Select placeholder="Huyện">
-                                                                <Option value="all">Tất cả</Option>
-                                                                <Option value="pending">Chờ duyệt</Option>
-                                                                <Option value="approved">Đã duyệt</Option>
-                                                                <Option value="refused">Bị từ chối</Option>
-                                                                <Option value="expired">Hết hạn</Option>
+                                                            <Select className='gou-antd-select' defaultValue="" onChange={this.handleChangeProvince2}>
+                                                                <Option value="">Tỉnh</Option>
+                                                                {provinces && provinces.map(province => { return (<Option value={province}>{province}</Option>) })}
                                                             </Select>
                                                         </div>
                                                         <div className="col-lg-3">
-                                                            <Select defaultValue="6-months">
-                                                                <Option value="3-months">3 tháng</Option>
-                                                                <Option value="6-months">6 tháng</Option>
-                                                                <Option value="9-months">9 tháng</Option>
-                                                                <Option value="1-year">1 năm</Option>
-                                                                <Option value="2-year">2 năm</Option>
+                                                            <Select
+                                                                mode="multiple"
+                                                                tagRender={tagRender}
+                                                                style={{ width: '100%' }}
+                                                                options={districts2}
+                                                                onChange={this.handleChangeDistricts2}
+                                                            />
+                                                        </div>
+                                                        <div className="col-lg-3">
+                                                            <Select className='gou-antd-select' defaultValue="" onChange={this.handleChangeCategory2}>
+                                                                <Option value="">Loại</Option>
+                                                                <Option value="apartment">{t('common:apartment')}</Option>
+                                                                <Option value="house">{t('common:house')}</Option>
+                                                                <Option value="mansion">{t('common:mansion')}</Option>
+                                                                <Option value="town-house">{t('common:town house')}</Option>
+                                                                <Option value="ground-project">{t('common:ground project')}</Option>
+                                                                <Option value="frontage-ground">{t('common:frontage ground')}</Option>
+                                                                <Option value="warehouse">{t('common:warehouse')}</Option>
+                                                                <Option value="hotel">{t('common:hotel')}</Option>
+                                                                <Option value="store">{t('common:store')}</Option>
+                                                                <Option value="boarding-house">{t('common:boarding house')}</Option>
+                                                                <Option value="resindental-land">{t('common:resindental land')}</Option>
+                                                                <Option value="in-alley-house">{t('common:in alley house')}</Option>
+                                                                <Option value="shophouse">{t('common:shophouse')}</Option>
+                                                                <Option value="ground">{t('common:ground')}</Option>
+                                                                <Option value="office">{t('common:office')}</Option>
+                                                                <Option value="farmland">{t('common:farmland')}</Option>
+                                                            </Select>
+                                                        </div>
+                                                        <div className="col-lg-3">
+                                                            <Select defaultValue="" onChange={this.handleChangeMonth2}>
+                                                                <Option value="">Tháng</Option>
+                                                                <Option value={3}>3 tháng</Option>
+                                                                <Option value={6}>6 tháng</Option>
+                                                                <Option value={9}>9 tháng</Option>
+                                                                <Option value={12}>1 năm</Option>
                                                             </Select>
                                                         </div>
                                                     </div>
@@ -240,13 +467,24 @@ class StatisticPage extends React.Component {
                                                         <div class="col-lg-6">
                                                             <div class="kt-radio-inline">
                                                                 <label class="kt-radio">
-                                                                    <input type="radio" name="gender" /> Bán
+                                                                    <input type="radio" name="type2" onChange={this.handleChangeType2} value="sell" /> Bán
                                                                     <span></span>
                                                                 </label>
                                                                 <label class="kt-radio">
-                                                                    <input type="radio" name="gender" checked="" /> Cho thuê
+                                                                    <input type="radio" name="type2" onChange={this.handleChangeType2} value="rent" /> Cho thuê
                                                                     <span></span>
                                                                 </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="row">
+                                                        <div class="col-lg-12">
+                                                            <div>
+                                                                <Chart
+                                                                    options={this.state.options2}
+                                                                    series={this.state.series2}
+                                                                    width="500px"
+                                                                />
                                                             </div>
                                                         </div>
                                                     </div>
@@ -265,30 +503,48 @@ class StatisticPage extends React.Component {
                                                 <div className="kt-portlet__body">
                                                     <div className="row">
                                                         <div className="col-lg-3">
-                                                            <Select placeholder="Huyện">
-                                                                <Option value="all">Tất cả</Option>
-                                                                <Option value="pending">Chờ duyệt</Option>
-                                                                <Option value="approved">Đã duyệt</Option>
-                                                                <Option value="refused">Bị từ chối</Option>
-                                                                <Option value="expired">Hết hạn</Option>
+                                                            <Select className='gou-antd-select' defaultValue="" onChange={this.handleChangeProvince3}>
+                                                                <Option value="">Tỉnh</Option>
+                                                                {provinces && provinces.map(province => { return (<Option value={province}>{province}</Option>) })}
                                                             </Select>
                                                         </div>
                                                         <div className="col-lg-3">
-                                                            <Select placeholder="Huyện">
-                                                                <Option value="all">Tất cả</Option>
-                                                                <Option value="pending">Chờ duyệt</Option>
-                                                                <Option value="approved">Đã duyệt</Option>
-                                                                <Option value="refused">Bị từ chối</Option>
-                                                                <Option value="expired">Hết hạn</Option>
+                                                            <Select
+                                                                mode="multiple"
+                                                                tagRender={tagRender}
+                                                                style={{ width: '100%' }}
+                                                                options={districts3}
+                                                                onChange={this.handleChangeDistricts3}
+                                                            />
+                                                        </div>
+                                                        <div className="col-lg-3">
+                                                            <Select className='gou-antd-select' defaultValue="" onChange={this.handleChangeCategory3}>
+                                                                <Option value="">Loại</Option>
+                                                                <Option value="apartment">{t('common:apartment')}</Option>
+                                                                <Option value="house">{t('common:house')}</Option>
+                                                                <Option value="mansion">{t('common:mansion')}</Option>
+                                                                <Option value="town-house">{t('common:town house')}</Option>
+                                                                <Option value="ground-project">{t('common:ground project')}</Option>
+                                                                <Option value="frontage-ground">{t('common:frontage ground')}</Option>
+                                                                <Option value="warehouse">{t('common:warehouse')}</Option>
+                                                                <Option value="hotel">{t('common:hotel')}</Option>
+                                                                <Option value="store">{t('common:store')}</Option>
+                                                                <Option value="boarding-house">{t('common:boarding house')}</Option>
+                                                                <Option value="resindental-land">{t('common:resindental land')}</Option>
+                                                                <Option value="in-alley-house">{t('common:in alley house')}</Option>
+                                                                <Option value="shophouse">{t('common:shophouse')}</Option>
+                                                                <Option value="ground">{t('common:ground')}</Option>
+                                                                <Option value="office">{t('common:office')}</Option>
+                                                                <Option value="farmland">{t('common:farmland')}</Option>
                                                             </Select>
                                                         </div>
                                                         <div className="col-lg-3">
-                                                            <Select defaultValue="6-months">
-                                                                <Option value="3-months">3 tháng</Option>
-                                                                <Option value="6-months">6 tháng</Option>
-                                                                <Option value="9-months">9 tháng</Option>
-                                                                <Option value="1-year">1 năm</Option>
-                                                                <Option value="2-year">2 năm</Option>
+                                                            <Select defaultValue="" onChange={this.handleChangeMonth3}>
+                                                                <Option value="">Tháng</Option>
+                                                                <Option value={3}>3 tháng</Option>
+                                                                <Option value={6}>6 tháng</Option>
+                                                                <Option value={9}>9 tháng</Option>
+                                                                <Option value={12}>1 năm</Option>
                                                             </Select>
                                                         </div>
                                                     </div>
@@ -296,11 +552,11 @@ class StatisticPage extends React.Component {
                                                         <div class="col-lg-6">
                                                             <div class="kt-radio-inline">
                                                                 <label class="kt-radio">
-                                                                    <input type="radio" name="gender" /> Bán
+                                                                    <input type="radio" name="type3" onChange={this.handleChangeType3} value="sell" /> Bán
                                                                     <span></span>
                                                                 </label>
                                                                 <label class="kt-radio">
-                                                                    <input type="radio" name="gender" checked="" /> Cho thuê
+                                                                    <input type="radio" name="type3" onChange={this.handleChangeType3} value="rent" /> Cho thuê
                                                                     <span></span>
                                                                 </label>
                                                             </div>
@@ -308,10 +564,10 @@ class StatisticPage extends React.Component {
                                                     </div>
                                                     <div className="row">
                                                         <div class="col-lg-12">
-                                                            <div className="mixed-chart">
+                                                            <div>
                                                                 <Chart
-                                                                    options={this.state.options2}
-                                                                    series={this.state.series2} 
+                                                                    options={this.state.options3}
+                                                                    series={this.state.series3}
                                                                     width="500px"
                                                                 />
                                                             </div>
@@ -334,4 +590,4 @@ class StatisticPage extends React.Component {
     }
 }
 
-export default StatisticPage;
+export default withTranslation(['common'])(StatisticPage);

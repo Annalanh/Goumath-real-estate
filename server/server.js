@@ -12,6 +12,8 @@ const mongoose = require('mongoose');
 const authRouter = require('./controllers/auth/router')
 const userRouter = require('./controllers/user/router')
 const postRouter = require('./controllers/post/router')
+const utilityRouter = require('./controllers/utility/router')
+const notificationRouter = require('./controllers/notification/router')
 
 app.use(cors());
 app.options('*', cors());
@@ -36,5 +38,8 @@ mongoose.connect('mongodb://localhost/goumath', {useNewUrlParser: true}, (err) =
 app.use("/auth", authRouter)
 app.use("/user", userRouter)
 app.use("/post", postRouter)
+app.use("/utility", utilityRouter)
+app.use("/notification", notificationRouter)
+
 
 server.listen(process.env.PORT || 8081);

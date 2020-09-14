@@ -108,9 +108,6 @@ class NavBar extends React.Component {
                                     </ul>
                                 </div>
                             </li>
-                            {
-                                isLogin() && <li className="kt-menu__item  kt-menu__item--submenu kt-menu__item--rel" data-ktmenu-submenu-toggle="click" aria-haspopup="true"><a className="kt-menu__link kt-menu__toggle"><span className="kt-menu__link-text">Components</span><i className="kt-menu__hor-arrow la la-angle-down"></i><i className="kt-menu__ver-arrow la la-angle-right"></i></a></li>
-                            }
                         </ul>
                     </div>
                 </div>

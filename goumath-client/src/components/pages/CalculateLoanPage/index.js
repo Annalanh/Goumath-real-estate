@@ -18,20 +18,20 @@ let columns = [
     },
     {
         title: 'Gốc còn lại',
-        dataIndex: 'left_balance',
-        key: 'left_balance',
+        dataIndex: 'principal_balance',
+        key: 'principal_balance',
         width: '25%'
     },
     {
         title: 'Gốc',
-        dataIndex: 'balance',
-        key: 'balance',
+        dataIndex: 'principal_payment',
+        key: 'principal_payment',
         width: '25%'
     },
     {
         title: 'Lãi',
-        dataIndex: 'interest',
-        key: 'interest',
+        dataIndex: 'interest_payment',
+        key: 'interest_payment',
         width: '25%'
     },
 ];
@@ -41,26 +41,50 @@ class CalculateLoanPage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            data: [],
-            pagination: {
-                current: 1,
-                pageSize: 5,
-                pageSizeOptions: ['5', '10', '20', '40', '80', '100'],
-                showSizeChanger: true,
-                total: ''
-            },
-            filters: {
-                type: null,
-                publish_status: null
-            },
+            tableData: [],
             loading: false,
+            loanAmount: 2800000000,
+            loanTerm: 24,
+            interestRate: 8.5,
         }
     }
+    componentDidMount = () => {
+        this.calculateLoan()
+    }
+    handleChangeLoanAmount = (e) => {
+        let loanAmount = e.target.value
+        this.setState({ loanAmount }, () => this.calculateLoan())
+    }
+    handleChangeLoanTerm = (e) => {
+        let loanTerm = e.target.value
+        this.setState({ loanTerm }, () => this.calculateLoan())
+    }
+    handleChangeInterestRate = (e) => {
+        let interestRate = e.target.value
+        this.setState({ interestRate }, () => this.calculateLoan())
+    }
+    calculateLoan = () => {
+        let { loanAmount, loanTerm, interestRate } = this.state
+        let interestRatePerMonth = interestRate/100/12 
+        let principal_payment = Math.ceil(loanAmount/loanTerm)
+        let principal_balance = loanAmount
+        let totalInterestPayment = 0
+        let tableData = []
+        
+        for(let i = 1; i <= loanTerm; i++){
+            let interest_payment = Math.ceil(principal_balance*interestRatePerMonth)
+            principal_balance = principal_balance - principal_payment
+            if(principal_balance < 0) principal_balance = ''
+            tableData.push({ key: i, month: i, principal_payment, interest_payment, principal_balance })
+            totalInterestPayment += interest_payment
+        }
 
+        tableData.push({ key: loanTerm + 1, month: 'Tổng', principal_balance: '', principal_payment: loanAmount, interest_payment: totalInterestPayment})
+        this.setState({ tableData })
+    }
     render() {
         let initialProfile = {}
-        let { data, pagination, loading } = this.state
-        let jsfiddleUrl = 'https://jsfiddle.net/alidingling/3Leoa7f4/';
+        let { tableData, loading, loanAmount, loanTerm, interestRate } = this.state
         const data_chart = [
             { name: 'Group A', value: 400 },
             { name: 'Group B', value: 300 },
@@ -105,17 +129,15 @@ class CalculateLoanPage extends React.Component {
                                                                     <div className="form-group row">
                                                                         <div className="col-lg-4 gou-input-container">
                                                                             <h5>Số tiền vay:</h5>
-                                                                            <input type="number" name="fullname" className="form-control gou-input" />
+                                                                            <input type="number" className="form-control gou-input" onChange={this.handleChangeLoanAmount} defaultValue = {loanAmount}/>
                                                                         </div>
                                                                         <div className="col-lg-4 gou-input-container">
                                                                             <h5>Thời gian vay:</h5>
-                                                                            <input type="number" name="fullname" className="form-control gou-input" />
-                                                                            <input type="number" name="fullname" className="form-control gou-input" />
+                                                                            <input type="number" className="form-control gou-input" onChange={this.handleChangeLoanTerm} defaultValue = {loanTerm}/>
                                                                         </div>
                                                                         <div className="col-lg-4 gou-input-container">
                                                                             <h5>Lãi suất vay:</h5>
-                                                                            <input type="number" name="fullname" className="form-control gou-input" />
-                                                                            <input type="number" name="fullname" className="form-control gou-input" />
+                                                                            <input type="number" className="form-control gou-input" onChange={this.handleChangeInterestRate} defaultValue = {interestRate}/>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -208,12 +230,13 @@ class CalculateLoanPage extends React.Component {
                                                 </div>
                                                 <Table
                                                     columns={columns}
-                                                    dataSource={data}
-                                                    pagination={pagination}
+                                                    dataSource={tableData}
                                                     loading={loading}
                                                     onChange={this.handleTableChange}
                                                     rowKey={record => record.key}
                                                     scroll={{ x: 'fit-content' }}
+                                                    pagination={false}
+                                                    rowClassName={(record, index) => index == loanTerm ? 'gou-total' : '' }
                                                 />
                                             </div>
                                         </div>

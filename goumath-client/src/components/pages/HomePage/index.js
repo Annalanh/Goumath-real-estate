@@ -1,4 +1,5 @@
 import React from 'react';
+import { withTranslation } from 'react-i18next';
 import { useRouteMatch } from 'react-router-dom';
 import { Select } from 'antd';
 import './style.css'

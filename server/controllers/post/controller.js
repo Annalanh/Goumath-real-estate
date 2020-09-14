@@ -4,7 +4,43 @@ const User = require('../../models/user')
 const path = require('path')
 const fs = require('fs')
 let generateUUID = require('../../utils/uuid-generator')
+function filterOne({ province, district, category, type, month }) {
+    return new Promise((resolve, reject) => {
+        let now = new Date();     
+        now.setMonth(now.getMonth() - month - 1)
+        Post.find({  province, district, category, type, createdAt: { $gte:now }}).then(posts => {
+            let totalPrices = []
+            let postCounts = []
+            let avgPrices = []
+            let monthList = []
+            let maxIndex = month - 1;
+            now = new Date()
 
+            for(let i = 0; i < month; i++){
+                let now = new Date()
+                now.setMonth(now.getMonth() - i)
+                monthList.push(now.getMonth() + 1)
+                totalPrices.push(0)
+                postCounts.push(0)
+                avgPrices.push(0)
+            }
+            posts.forEach(post => {
+                let diffMonth = now.getMonth() - post.createdAt.getMonth()
+                let index = maxIndex - diffMonth
+                totalPrices[index] = totalPrices[index] + Number(post.price)
+                postCounts[index] = postCounts[index] + 1
+            })
+            for(let j = 0; j < month; j++){
+                if(postCounts[j] > 0){
+                    avgPrices[j] = totalPrices[j]/postCounts[j]
+                }
+            }
+            monthList = monthList.reverse()
+            console.log(totalPrices, postCounts, avgPrices)
+            resolve({ postCounts, avgPrices, monthList, district })
+        })
+    })
+}
 class PostController {
     getPostsByUserId(req, res) {
         let current = Number(req.query.current)
@@ -133,7 +169,7 @@ class PostController {
                         ward,
                         street,
                         direction,
-                        house_no: Number(house_no),
+                        house_no,
                         lat,
                         lon,
                         price,
@@ -173,7 +209,7 @@ class PostController {
                         ward,
                         street,
                         direction,
-                        house_no: Number(house_no),
+                        house_no,
                         lat,
                         lon,
                         radius,
@@ -209,11 +245,11 @@ class PostController {
                 if (err) res.send({ status: false, message: "Cannot find post" })
                 else {
                     User.findOne({ _id: userId }, (err, user) => {
-                        if(err) res.send({status: false, message: "Current user does not exist"})
-                        else{
+                        if (err) res.send({ status: false, message: "Current user does not exist" })
+                        else {
                             let favoritePosts = user.favorite_posts
                             let isSaved = favoritePosts.includes(postId)
-                            res.send({status: true, post, isSaved})
+                            res.send({ status: true, post, isSaved })
                         }
                     })
                 }
@@ -307,7 +343,7 @@ class PostController {
                             ward,
                             street,
                             direction,
-                            house_no: Number(house_no),
+                            house_no,
                             lat,
                             lon,
                             price,
@@ -343,12 +379,7 @@ class PostController {
                             num_bedroom: Number(num_bedroom),
                             num_floor: Number(num_floor),
                             num_bathroom: Number(num_bathroom),
-                            province,
-                            district,
-                            ward,
-                            street,
                             direction,
-                            house_no: Number(house_no),
                             lat,
                             lon,
                             radius,
@@ -384,35 +415,63 @@ class PostController {
 
     async savePost(req, res) {
         let { userId, postId } = req.body
-        try{
+        try {
             let userInfo = await User.findOne({ _id: userId })
             userInfo.favorite_posts.push(postId)
-            try{
+            try {
                 await userInfo.save()
-                res.send({status: true})
-            }catch(err){
-                res.send({status: false, message: "Cannot save post"})
-            }  
-        }catch(err){
-            res.send({status: false, message: "Current user does not exist"})
-        }  
+                res.send({ status: true })
+            } catch (err) {
+                res.send({ status: false, message: "Cannot save post" })
+            }
+        } catch (err) {
+            res.send({ status: false, message: "Current user does not exist" })
+        }
     }
 
-    async unsavePost(req, res){
+    async unsavePost(req, res) {
         let { userId, postId } = req.body
-        try{
+        try {
             let userInfo = await User.findOne({ _id: userId })
             let favoritePosts = userInfo.favorite_posts
             favoritePosts.splice(favoritePosts.indexOf(postId), 1)
-            try{
+            try {
                 await userInfo.save()
-                res.send({status: true})
-            }catch(err){
-                res.send({status: false, message: "Cannot unsave post"})
-            }  
-        }catch(err){
-            res.send({status: false, message: "Current user does not exist"})
-        }  
+                res.send({ status: true })
+            } catch (err) {
+                res.send({ status: false, message: "Cannot unsave post" })
+            }
+        } catch (err) {
+            res.send({ status: false, message: "Current user does not exist" })
+        }
     }
+
+    async filterOneDistrict(req, res){
+        try {
+            const { province, district, category, type, month } = req.body
+            const rs = await filterOne({ province, district, category, type, month })
+            res.send(rs)
+        } catch (error) {
+            console.log(error)
+            res.send([])
+        }
+    }
+
+    filterDistricts(req, res) {
+        let { province, districts, category, type, month } = req.body
+        let arr = []
+
+        districts.forEach((district) => {
+            arr.push(filterOne({ province, district, category, type, month }))
+        })
+        Promise.all(arr).then((docs) => {
+            let result = []
+            docs.forEach((doc, index) => {
+                result.push(doc)
+            })
+            res.send(result)
+        }).catch(() => { res.send([]) })
+    }
+
 }
 module.exports = new PostController()

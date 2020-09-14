@@ -1,9 +1,12 @@
 import React from 'react';
 import axios from 'axios';
+import mapboxgl from 'mapbox-gl';
+import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
+import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
 import swal from 'sweetalert';
 import { withTranslation } from 'react-i18next';
 import { Formik } from 'formik';
-import { Upload, Modal, Select} from 'antd';
+import { Upload, Modal, Select } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import MobileNavBar from '../../layouts/MobileNavbar'
 import NavBar from '../../layouts/NavBar'
@@ -33,14 +36,74 @@ class NewSellRentPostPage extends React.Component {
       fileList: [],
       publish_status: 'pending',
       transaction_status: 'open',
-      lat: '123',
-      lon: '123',
-      province: 'Hanoi',
-      district: 'Ba Dinh',
-      ward: 'Lieu giai',
-      street: 'Doc Ngu',
-      house_no: '143',
+      lat: '21.0289196',
+      lon: '105.8358087',
+      province: '',
+      district: '',
+      ward: '',
+      street: '',
+      house_no: '',
     };
+  }
+
+  componentDidMount = () => {
+    let { lat, lon } = this.state
+    mapboxgl.accessToken = 'pk.eyJ1IjoidGhhb2d1bSIsImEiOiJjazJwbHI0eDIwNW82M210b2JnaTBneHY5In0.t4RveeJuHKVJt0RIgFOAGQ';
+    this.map = new mapboxgl.Map({
+      container: 'map',
+      style: 'mapbox://styles/mapbox/streets-v11',
+      center: [Number(lon), Number(lat)],
+      zoom: 14,
+    });
+
+    this.marker = new mapboxgl.Marker().setLngLat([Number(lon), Number(lat)]).addTo(this.map);
+
+    this.map.on('click', (e) => {
+      let lat = e.lngLat.lat
+      let lon = e.lngLat.lng
+      this.setState({ lat, lon }, () => {
+        this.marker.remove()
+        this.marker = new mapboxgl.Marker().setLngLat([Number(lon), Number(lat)]).addTo(this.map);
+        axios({
+          url: `https://apis.wemap.asia/geocode-1/reverse?point.lat=${lat}&point.lon=${lon}&key=vpstPRxkBBTLaZkOaCfAHlqXtCR`,
+          method: 'GET'
+        }).then(res => {
+          let resData = res.data
+          let poiData = resData.features[0].properties
+          if (poiData) {
+            let { name, street, region, county, locality } = poiData
+            if(street) {
+              street = street.replace('Phố', '')
+              street = street.replace('Đường', '')
+            }
+            this.setState({
+              province: region || '',
+              district: county || '',
+              ward: locality || '',
+              street: street || '',
+              house_no: name || '',
+            })
+          }
+        })
+      })
+    })
+
+    this.map.addControl(
+      new mapboxgl.GeolocateControl({
+        positionOptions: {
+          enableHighAccuracy: true
+        },
+        trackUserLocation: true
+      })
+    );
+
+    this.map.addControl(
+      new MapboxGeocoder({
+        accessToken: 'pk.eyJ1IjoidGhhb2d1bSIsImEiOiJjazJwbHI0eDIwNW82M210b2JnaTBneHY5In0.t4RveeJuHKVJt0RIgFOAGQ',
+        mapboxgl: mapboxgl,
+        marker: false
+      })
+    );
   }
 
   handleCancel = () => this.setState({ previewVisible: false });
@@ -69,6 +132,25 @@ class NewSellRentPostPage extends React.Component {
     this.setState({ transaction_status: value })
   }
 
+  handleChangeProvince = (e) => {
+    this.setState({ province: e.target.value})
+  }
+
+  handleChangeDistrict = (e) => {
+    this.setState({ district: e.target.value})
+  }
+
+  handleChangeWard = (e) => {
+    this.setState({ ward: e.target.value})
+  }
+
+  handleChangeStreet = (e) => {
+    this.setState({ street: e.target.value})
+  }
+
+  handleChangeHouseNo = (e) => {
+    this.setState({ house_no: e.target.value})
+  }
 
   render() {
     const { t } = this.props
@@ -169,8 +251,7 @@ class NewSellRentPostPage extends React.Component {
                             actions.setSubmitting(false);
 
                             let formData = new FormData()
-                            // let { fileList, lat, lon, province, district, ward, street, house_no, transaction_status, publish_status } = this.state
-
+                            
                             fileList.forEach(file => {
                               formData.append('uploadedFiles', file.originFileObj)
                             })
@@ -388,16 +469,17 @@ class NewSellRentPostPage extends React.Component {
                                   </div>
                                   <h3 className="kt-section__title">2. {t('common:location')}:</h3>
                                   <div className="kt-section__body">
+                                    <div id="gou-map-container">
+                                      <div id="map" />
+                                    </div>
                                     <div className="form-group row">
                                       <div className="col-lg-4">
                                         <label>{t('common:province')}:</label>
                                         <input
                                           className="form-control"
                                           type="text"
-                                        // name="province"
-                                        // value={props.values.province}
-                                        // onChange={props.handleChange}
-                                        // onBlur={props.handleBlur}
+                                          onChange={this.handleChangeProvince}
+                                          value={province}
                                         />
                                       </div>
                                       <div className="col-lg-4">
@@ -405,10 +487,8 @@ class NewSellRentPostPage extends React.Component {
                                         <input
                                           className="form-control"
                                           type="text"
-                                        // name="district"
-                                        // value={props.values.district}
-                                        // onChange={props.handleChange}
-                                        // onBlur={props.handleBlur}
+                                          onChange={this.handleChangeDistrict}
+                                          value={district}
                                         />
                                       </div>
                                       <div className="col-lg-4">
@@ -416,10 +496,8 @@ class NewSellRentPostPage extends React.Component {
                                         <input
                                           className="form-control"
                                           type="text"
-                                        // name="ward"
-                                        // value={props.values.ward}
-                                        // onChange={props.handleChange}
-                                        // onBlur={props.handleBlur}
+                                          onChange={this.handleChangeWard}
+                                          value={ward}
                                         />
                                       </div>
                                     </div>
@@ -429,10 +507,8 @@ class NewSellRentPostPage extends React.Component {
                                         <input
                                           className="form-control"
                                           type="text"
-                                        // name="street"
-                                        // value={props.values.street}
-                                        // onChange={props.handleChange}
-                                        // onBlur={props.handleBlur}
+                                          onChange={this.handleChangeStreet}
+                                          value={street}
                                         />
                                       </div>
                                       <div className="col-lg-4">
@@ -440,10 +516,8 @@ class NewSellRentPostPage extends React.Component {
                                         <input
                                           className="form-control"
                                           type="text"
-                                        // name="house_no"
-                                        // value={props.values.house_no}
-                                        // onChange={props.handleChange}
-                                        // onBlur={props.handleBlur}
+                                          onChange={this.handleChangeHouseNo}
+                                          value={house_no}
                                         />
                                       </div>
                                       <div className="col-lg-4">
