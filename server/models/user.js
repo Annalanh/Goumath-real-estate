@@ -13,7 +13,10 @@ const userSchema = new Schema({
     avatar: { type: String},
     is_admin : { type : Boolean, default : false },
     my_post: [{ type: Schema.Types.ObjectId, ref: 'Post' }],
-    favorite_posts: [{ type: Schema.Types.ObjectId, ref: 'Post' }]
+    favorite_posts: [{ type: Schema.Types.ObjectId, ref: 'Post' }],
+    register_province: { type : String },
+    register_district: { type : String },
+    is_register: { type : Boolean, default : false }
 })
 
 module.exports = mongoose.model('User',userSchema);

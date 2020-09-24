@@ -27,8 +27,7 @@ class LoginPage extends React.Component {
 					login(resData.token)
 					setUsername(resData.username)
 					setUserId(resData.userId)
-					setUserRole('admin')
-					// let history = this.props.history
+					if(resData.is_admin)setUserRole('admin')
 					let location = this.props.location
 					if (location.state) {
 						let { from } = location.state;

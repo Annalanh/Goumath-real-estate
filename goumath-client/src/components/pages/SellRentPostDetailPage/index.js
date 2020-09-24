@@ -50,7 +50,8 @@ class SellRentPostDetail extends React.Component {
       contact_email: '',
       createdAt: '',
       author_avatar: '',
-      checkedTypes: ['hospital', 'university', 'medical_supply', 'pharmacy', 'veterinary', 'kindergarten', 'school', 'college', 'language_school', 'music_school', 'mall', 'supermarket']
+      utilityCounts: {'hospital': 0, 'university': 0,  'medical_supply': 0,  'pharmacy': 0, 'veterinary': 0, 'kindergarten': 0, 'school': 0, 'college': 0, 'language_school': 0, 'music_school': 0, 'mall': 0, 'supermarket': 0 },
+      checkedTypes: ['hospital', 'university', 'medical_supply', 'pharmacy', 'school', 'mall', 'supermarket']
     };
   }
 
@@ -89,13 +90,13 @@ class SellRentPostDetail extends React.Component {
           built_year: postInfo.built_year,
           car_parking: postInfo.car_parking,
           fully_furnitured: postInfo.fully_furnitured,
-          business_usable: postInfo.usable,
+          business_usable: postInfo.business_usable,
           posted_by_landholder: postInfo.posted_by_landholder,
           description: postInfo.description,
           contact_name: postInfo.contact_name,
           contact_phone: postInfo.contact_phone,
           contact_email: postInfo.contact_email,
-          createdAt: postInfo.createdAt,
+          createdAt: postInfo.createdAt.split("T")[0],
           author_avatar: postInfo.author.avatar
         }, () => {
           let { lat, lon, radius, checkedTypes } = this.state
@@ -120,7 +121,10 @@ class SellRentPostDetail extends React.Component {
             data: { lat, lon, checkedTypes, radius }
           }).then(res => {
             let resData = res.data
+            let utilityCounts = {'hospital': 0, 'university': 0,  'medical_supply': 0,  'pharmacy': 0, 'veterinary': 0, 'kindergarten': 0, 'school': 0, 'college': 0, 'language_school': 0, 'music_school': 0, 'mall': 0, 'supermarket': 0 }
             resData.forEach(utility => {
+              utilityCounts[utility.type] = utility.point.length
+              this.setState({ utilityCounts })
               showUtility({ pois: utility.point, map: this.map, type: utility.type, poiClick: { lat, lon } })
             })
           })
@@ -134,9 +138,11 @@ class SellRentPostDetail extends React.Component {
     let currentCheckedTypes = [...this.state.checkedTypes]
     let type = e.target.name
     if (!e.target.checked) {
+      let newUtilityCounts = {...this.state.utilityCounts}
+      newUtilityCounts[type] = 0
       let index = currentCheckedTypes.indexOf(type)
       currentCheckedTypes.splice(index, 1);
-      this.setState({ checkedTypes: currentCheckedTypes }, () => {
+      this.setState({ checkedTypes: currentCheckedTypes, utilityCounts: newUtilityCounts }, () => {
         let markerList = document.getElementsByClassName(type)
         Array.from(markerList).forEach(marker => {
           marker.remove()
@@ -149,7 +155,10 @@ class SellRentPostDetail extends React.Component {
       }).then(res => {
         let resData = res.data
         currentCheckedTypes.push(type)
-        this.setState({ checkedTypes: currentCheckedTypes }, () => {
+        let newUtilityCounts = {...this.state.utilityCounts}
+        newUtilityCounts[type] = resData.length
+
+        this.setState({ checkedTypes: currentCheckedTypes, utilityCounts: newUtilityCounts }, () => {
           showUtility({ pois: resData, map: this.map, type, poiClick: { lat, lon } })
         });
       })
@@ -188,9 +197,13 @@ class SellRentPostDetail extends React.Component {
       data: { lat, lon, checkedTypes, radius: value }
     }).then(res => {
       let resData = res.data
+      let utilityCounts = {'hospital': 0, 'university': 0,  'medical_supply': 0,  'pharmacy': 0, 'veterinary': 0, 'kindergarten': 0, 'school': 0, 'college': 0, 'language_school': 0, 'music_school': 0, 'mall': 0, 'supermarket': 0 }
+
       resData.forEach(utility => {
+        utilityCounts[utility.type] = utility.point.length
         showUtility({ pois: utility.point, map: this.map, type: utility.type, poiClick: { lat, lon } })
       })
+      this.setState({ utilityCounts })
     })
 
   }
@@ -292,20 +305,20 @@ class SellRentPostDetail extends React.Component {
                                 {this.state.price} {t(`common:${this.state.price_unit}`)}
                               </div>
                               <div className="gou-general-others">
-                                <div className="gou-icon"><i class="kt-menu__link-icon flaticon2-protection"></i></div>
+                                <div className="gou-icon"><i class="kt-menu__link-icon fa fa-expand"></i></div>
 
                                 <div>{t('common:area')}: {this.state.area}</div>
                               </div>
                               <div className="gou-general-others">
-                                <div className="gou-icon"><i class="kt-menu__link-icon flaticon2-protection"></i></div>
+                                <div className="gou-icon"><i class="kt-menu__link-icon fa fa-map-marker-alt"></i></div>
                                 <div>{t('common:address')}: {this.state.address}</div>
                               </div>
                               <div className="gou-general-others">
-                                <div className="gou-icon"><i class="kt-menu__link-icon flaticon2-protection"></i></div>
+                                <div className="gou-icon"><i class="kt-menu__link-icon fa fa-lock"></i></div>
                                 <div>{t('common:transaction status')}: {t(`common:${this.state.transaction_status}`)}</div>
                               </div>
                               <div className="gou-general-others">
-                                <div className="gou-icon"><i class="kt-menu__link-icon flaticon2-protection"></i></div>
+                                <div className="gou-icon"><i class="kt-menu__link-icon fa fa-calendar-alt"></i></div>
                                 <div>{t('common:created at')}: {this.state.createdAt}</div>
                               </div>
                             </div>
@@ -331,7 +344,7 @@ class SellRentPostDetail extends React.Component {
                             <div className="col-12 gou-props-container">
                               <div className="row">
                                 <div className="col-3">{t('common:post type')}:</div>
-                                <div className="col-9">{this.state.type} {this.state.category}</div>
+                                <div className="col-9">{t(`common:${this.state.type}`)} {t(`common:${this.state.category}`)}</div>
                               </div>
                               <div className="row">
                                 <div className="col-3">{t('common:price')}:</div>
@@ -355,7 +368,7 @@ class SellRentPostDetail extends React.Component {
                               </div>
                               <div className="row">
                                 <div className="col-3">{t('common:direction')}:</div>
-                                <div className="col-9">{this.state.direction}</div>
+                                <div className="col-9">{t(`common:${this.state.direction}`)}</div>
                               </div>
                               <div className="row">
                                 <div className="col-3">{t('common:facade')}:</div>
@@ -367,19 +380,19 @@ class SellRentPostDetail extends React.Component {
                               </div>
                               <div className="row">
                                 <div className="col-3">{t('common:car parking')}:</div>
-                                <div className="col-9">{this.state.car_parking}</div>
+                                <div className="col-9">{t(`common:${this.state.car_parking}`)}</div>
                               </div>
                               <div className="row">
                                 <div className="col-3">{t('common:fully furnitured')}:</div>
-                                <div className="col-9">{this.state.fully_furnitured}</div>
+                                <div className="col-9">{t(`common:${this.state.fully_furnitured}`)}</div>
                               </div>
                               <div className="row">
                                 <div className="col-3">{t('common:business usable')}:</div>
-                                <div className="col-9">{this.state.business_usable}</div>
+                                <div className="col-9">{t(`common:${this.state.business_usable}`)}</div>
                               </div>
                               <div className="row">
                                 <div className="col-3">{t('common:posted by landholder')}:</div>
-                                <div className="col-9">{this.state.posted_by_landholder}</div>
+                                <div className="col-9">{t(`common:${this.state.posted_by_landholder}`)}</div>
                               </div>
                             </div>
                           </div>
@@ -414,14 +427,14 @@ class SellRentPostDetail extends React.Component {
                                   <div className="col-6">
                                     <label class="kt-checkbox">
                                       <input type="checkbox" name="hospital" onClick={this.handleShowUtility} defaultChecked />
-                                      Bệnh viện (10)
+                                       {t('hospital')} ({this.state.utilityCounts.hospital})
                                       <span></span>
                                     </label>
                                   </div>
                                   <div className="col-6">
                                     <label class="kt-checkbox">
                                       <input type="checkbox" name="university" onChange={this.handleShowUtility} defaultChecked />
-                                        Đại học (10)
+                                        {t('university')} ({this.state.utilityCounts.university})
                                       <span></span>
                                     </label>
                                   </div>
@@ -430,14 +443,14 @@ class SellRentPostDetail extends React.Component {
                                   <div className="col-6">
                                     <label class="kt-checkbox">
                                       <input type="checkbox" name="medical_supply" onClick={this.handleShowUtility} defaultChecked />
-                                      Cơ sở y tế (4)
+                                      {t('medical supply')} ({this.state.utilityCounts.medical_supply})
                                       <span></span>
                                     </label>
                                   </div>
                                   <div className="col-6">
                                     <label class="kt-checkbox">
                                       <input type="checkbox" name="pharmacy" onClick={this.handleShowUtility} defaultChecked />
-                                        Nhà thuốc (5)
+                                      {t('pharmacy')} ({this.state.utilityCounts.pharmacy})
                                       <span></span>
                                     </label>
                                   </div>
@@ -445,15 +458,15 @@ class SellRentPostDetail extends React.Component {
                                 <div className="row">
                                   <div className="col-6">
                                     <label class="kt-checkbox">
-                                      <input type="checkbox" name="veterinary" onClick={this.handleShowUtility} defaultChecked />
-                                      Thú y (6)
+                                      <input type="checkbox" name="veterinary" onClick={this.handleShowUtility} />
+                                      {t('veterinary')}({this.state.utilityCounts.veterinary})
                                       <span></span>
                                     </label>
                                   </div>
                                   <div className="col-6">
                                     <label class="kt-checkbox">
-                                      <input type="checkbox" name="kindergarten" onClick={this.handleShowUtility} defaultChecked />
-                                        Mẫu giáo (7)
+                                      <input type="checkbox" name="kindergarten" onClick={this.handleShowUtility} />
+                                      {t('kindergarten')}({this.state.utilityCounts.kindergarten})
                                       <span></span>
                                     </label>
                                   </div>
@@ -462,14 +475,14 @@ class SellRentPostDetail extends React.Component {
                                   <div className="col-6">
                                     <label class="kt-checkbox">
                                       <input type="checkbox" name="school" onClick={this.handleShowUtility} defaultChecked />
-                                      Trường học (4)
+                                      {t('school')} ({this.state.utilityCounts.school})
                                       <span></span>
                                     </label>
                                   </div>
                                   <div className="col-6">
                                     <label class="kt-checkbox">
-                                      <input type="checkbox" name="college" onClick={this.handleShowUtility} defaultChecked />
-                                        Cao đẳng (10)
+                                      <input type="checkbox" name="college" onClick={this.handleShowUtility} />
+                                      {t('college')} ({this.state.utilityCounts.college})
                                       <span></span>
                                     </label>
                                   </div>
@@ -477,15 +490,15 @@ class SellRentPostDetail extends React.Component {
                                 <div className="row">
                                   <div className="col-6">
                                     <label class="kt-checkbox">
-                                      <input type="checkbox" name="language_school" onClick={this.handleShowUtility} defaultChecked />
-                                      Trung tâm ngoại ngữ (10)
+                                      <input type="checkbox" name="language_school" onClick={this.handleShowUtility} />
+                                      {t('language school')} ({this.state.utilityCounts.language_school})
                                       <span></span>
                                     </label>
                                   </div>
                                   <div className="col-6">
                                     <label class="kt-checkbox">
                                       <input type="checkbox" name="mall" onClick={this.handleShowUtility} defaultChecked />
-                                        Trung tâm thương mại (1)
+                                      {t('mall')} ({this.state.utilityCounts.mall})
                                       <span></span>
                                     </label>
                                   </div>
@@ -494,14 +507,14 @@ class SellRentPostDetail extends React.Component {
                                   <div className="col-6">
                                     <label class="kt-checkbox">
                                       <input type="checkbox" name="supermarket" onClick={this.handleShowUtility} defaultChecked />
-                                      Siêu thị (9)
+                                      {t('supermarket')}({this.state.utilityCounts.supermarket})
                                       <span></span>
                                     </label>
                                   </div>
                                   <div className="col-6">
                                     <label class="kt-checkbox">
-                                      <input type="checkbox" name="music_school" onClick={this.handleShowUtility} defaultChecked />
-                                      Trung tâm dạy nhạc, mỹ thuật, nấu ăn (10)
+                                      <input type="checkbox" name="music_school" onClick={this.handleShowUtility} />
+                                      {t('music school')}({this.state.utilityCounts.music_school})
                                       <span></span>
                                     </label>
                                   </div>

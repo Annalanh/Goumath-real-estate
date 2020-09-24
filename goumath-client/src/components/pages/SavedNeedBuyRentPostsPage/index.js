@@ -180,7 +180,7 @@ class SavedNeedBuyRentPostsPage extends React.Component {
                                                         num_floor={post.num_floor}
                                                         num_bathroom={post.num_bathroom}
                                                         num_bedroom={post.num_bedroom}
-                                                        createdAt={post.createdAt}
+                                                        createdAt={post.createdAt.split("T")[0]}
                                                         direction={post.direction}
                                                     />
                                                 )

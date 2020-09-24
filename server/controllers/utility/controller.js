@@ -20,7 +20,7 @@ function getUtility(type) {
 function getOne(utility, lat, lon, radius) {
     if(radius < 100) radius = radius*1000
     return new Promise((resolve, reject) => {
-        request(`https://apis.wemap.asia/we-tools/explore?lat=${lat}&lon=${lon}&k=${utility.k}&v=${utility.v}&d=${radius}&key=${API_KEY}&type=raw&limit=10`, (error, header, body) => {
+        request(`https://apis.wemap.asia/we-tools/explore?lat=${lat}&lon=${lon}&k=${utility.k}&v=${utility.v}&d=${radius}&key=${API_KEY}&type=raw&limit=100`, (error, header, body) => {
             if (error) {
                 reject(error)
             }

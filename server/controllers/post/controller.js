@@ -1,4 +1,6 @@
 const formidable = require('formidable');
+const sgMail = require('@sendgrid/mail');
+const dotenv = require('dotenv').config()
 const Post = require('../../models/post')
 const User = require('../../models/user')
 const path = require('path')
@@ -6,9 +8,9 @@ const fs = require('fs')
 let generateUUID = require('../../utils/uuid-generator')
 function filterOne({ province, district, category, type, month }) {
     return new Promise((resolve, reject) => {
-        let now = new Date();     
+        let now = new Date();
         now.setMonth(now.getMonth() - month - 1)
-        Post.find({  province, district, category, type, createdAt: { $gte:now }}).then(posts => {
+        Post.find({ province, district, category, type, createdAt: { $gte: now }, price_in_number: { $gt: 0 } }).then(posts => {
             let totalPrices = []
             let postCounts = []
             let avgPrices = []
@@ -16,7 +18,7 @@ function filterOne({ province, district, category, type, month }) {
             let maxIndex = month - 1;
             now = new Date()
 
-            for(let i = 0; i < month; i++){
+            for (let i = 0; i < month; i++) {
                 let now = new Date()
                 now.setMonth(now.getMonth() - i)
                 monthList.push(now.getMonth() + 1)
@@ -30,16 +32,24 @@ function filterOne({ province, district, category, type, month }) {
                 totalPrices[index] = totalPrices[index] + Number(post.price)
                 postCounts[index] = postCounts[index] + 1
             })
-            for(let j = 0; j < month; j++){
-                if(postCounts[j] > 0){
-                    avgPrices[j] = totalPrices[j]/postCounts[j]
+            for (let j = 0; j < month; j++) {
+                if (postCounts[j] > 0) {
+                    avgPrices[j] = totalPrices[j] / postCounts[j]
                 }
             }
             monthList = monthList.reverse()
-            console.log(totalPrices, postCounts, avgPrices)
             resolve({ postCounts, avgPrices, monthList, district })
         })
     })
+}
+function calcPriceInNumber({ price, area, price_unit}){
+    if(price_unit == "million/m2"){
+        return Number(area)*Number(price)*1000000;
+    }else if(price_unit == "deal"){
+        return 0;
+    }else{
+        return Number(price);
+    }
 }
 class PostController {
     getPostsByUserId(req, res) {
@@ -68,20 +78,52 @@ class PostController {
     getAllPosts(req, res) {
         let current = Number(req.query.current)
         let pageSize = Number(req.query.pageSize)
-        let { type, publish_status } = req.query
+        let { type, category, priceRange, areaRange, province, district, sort, publish_status } = req.query
         let filterInfo = {}
+        let sortInfo = {}
 
-        if (type != 'null') {
-            filterInfo.type = type
+        if (type != 'null' && type != undefined) { filterInfo.type = type }
+        if (category != 'null' && category != undefined) { filterInfo.category = category }
+        if (priceRange != 'null' && priceRange != undefined) {
+            if (priceRange == 'deal') {
+                filterInfo.price_in_number = 0
+            } else if (priceRange == 'lt500') {
+                filterInfo.price_in_number = { $lte: 500000000, $gt: 0 }
+            } else if (priceRange == 'gt20000'){
+                filterInfo.price_in_number = { $gte: 20000000000 }
+            } else {
+                let priceRanges = priceRange.split("to")
+                let minPrice = Number(priceRanges[0])*1000000
+                let maxPrice = Number(priceRanges[1])*1000000
+                filterInfo.price_in_number = { $gte: minPrice, $lte: maxPrice }
+            }
         }
-        if (publish_status != 'null') {
-            filterInfo.publish_status = publish_status
+        if (areaRange != 'null' && areaRange != undefined) {
+            if (areaRange == 'lt30') {
+                filterInfo.area = { $lte: 30 }
+            } else if (areaRange == 'gt300') {
+                filterInfo.area = { $gte: 300 }
+            } else {
+                let areaRanges = areaRange.split("to")
+                let minArea = Number(areaRanges[0])
+                let maxArea = Number(areaRanges[1])
+                filterInfo.area = { $gte: minArea, $lte: maxArea }
+            }
         }
+        if (province != 'null' && province != undefined) { filterInfo.province = province }
+        if (district != 'null' && district != undefined) { filterInfo.district = district }
+        if (sort != 'null' && sort != undefined) {
+            if (sort == 'asc-price') sortInfo.price_in_number = 1
+            else if (sort == 'desc-price') sortInfo.price_in_number = -1
+            else if (sort == 'asc-area') sortInfo.area = 1
+            else if (sort == 'desc-area') sortInfo.area = -1
+            else if (sort == 'newest') sortInfo.createdAt = -1
+        }
+        if (publish_status != 'null' && publish_status != undefined) { filterInfo.publish_status = publish_status }
 
         let skip = pageSize * (current - 1)
-
         Post.count(filterInfo, (err, number) => {
-            Post.find(filterInfo).skip(skip).limit(pageSize).exec((err, data) => {
+            Post.find(filterInfo).skip(skip).limit(pageSize).sort(sortInfo).exec((err, data) => {
                 res.send({ results: data, totalCount: number })
             })
         })
@@ -90,6 +132,7 @@ class PostController {
     createPost(req, res) {
         let form = formidable({ multiples: true })
         let listImg = []
+        let postId = ''
 
         form.parse(req, function (err, fields, files) {
             if (err) res.send({ status: false, message: "Cannot upload the files!" })
@@ -127,6 +170,8 @@ class PostController {
                     transaction_status,
                     publish_status
                 } = fields
+
+                let price_in_number = calcPriceInNumber({ price, area, price_unit })
 
                 if (type == 'sell' || type == 'rent') {
                     if (files.uploadedFiles) {
@@ -174,6 +219,7 @@ class PostController {
                         lon,
                         price,
                         price_unit,
+                        price_in_number,
                         facade,
                         built_year: Number(built_year),
                         car_parking: JSON.parse(car_parking),
@@ -189,10 +235,32 @@ class PostController {
                         publish_status
                     }).then(postCreated => {
                         if (postCreated) {
+                            postId = postCreated._id
                             res.send({ status: true, message: "new post is created" })
                         } else {
                             res.send({ status: false, message: "cannot create a new post" })
                         }
+                    }).then((a) => {
+                        User.find({ is_register: true, register_province: province, register_district: district })
+                            .select('email')
+                            .then(users => {
+                                let emails = []
+                                users.forEach(user => emails.push(user.email))
+                                sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+                                const msg = {
+                                    to: emails,
+                                    from: 'thaonp041099@gmail.com',
+                                    subject: 'New post for you - Bài đăng mới dành cho bạn',
+                                    text: 'click to see the new post',
+                                    html: `<a href="http://localhost:3000/sell-rent-post/detail/${postId}">click to see the new post</a>`,
+                                };
+                                sgMail
+                                    .sendMultiple(msg)
+                                    .then(() => { }, error => {
+                                        console.error(error);
+                                    });
+                            })
                     })
                 } else {
                     Post.create({
@@ -215,6 +283,7 @@ class PostController {
                         radius,
                         price,
                         price_unit,
+                        price_in_number,
                         description,
                         contact_name,
                         contact_phone,
@@ -297,7 +366,7 @@ class PostController {
                     publish_status,
                     currentUploadedFiles
                 } = fields
-
+                let price_in_number = calcPriceInNumber({ price, area, price_unit })
                 if (type == 'sell' || type == 'rent') {
                     if (currentUploadedFiles != 'empty') {
                         let currentUploadedFilesToArray = currentUploadedFiles.split(',')
@@ -348,6 +417,7 @@ class PostController {
                             lon,
                             price,
                             price_unit,
+                            price_in_number,
                             facade,
                             built_year: Number(built_year),
                             car_parking: JSON.parse(car_parking),
@@ -385,6 +455,7 @@ class PostController {
                             radius,
                             price,
                             price_unit,
+                            price_in_number,
                             description,
                             contact_name,
                             contact_phone,
@@ -446,7 +517,7 @@ class PostController {
         }
     }
 
-    async filterOneDistrict(req, res){
+    async filterOneDistrict(req, res) {
         try {
             const { province, district, category, type, month } = req.body
             const rs = await filterOne({ province, district, category, type, month })

@@ -1,5 +1,17 @@
 {
     "show map": "Show map",
     "utility map": "Utility map",
-    "requirements": "Requirements"
+    "requirements": "Requirements",
+    "hospital": "Hospital",
+    "university": "University",
+    "medical supply": "Medical supply",
+    "pharmacy": "Pharmacy",
+    "veterinary": "Veterinary",
+    "kindergarten": "Kindergarten",
+    "school": "School",
+    "college": "College",
+    "language school": "Language school",
+    "music school": "Music school",
+    "mall": "Mall",
+    "supermarket": "Supermarket"
 }

@@ -84,6 +84,7 @@ function toRadian(degree) {
 }
 
 export default function showUtility({ pois, map, type, poiClick }) {
+  let currentLang = localStorage.getItem('i18nextLng')
   pois.forEach(poi => {
     let hospitalIcon = document.createElement('div');
     hospitalIcon.classList.add(type)
@@ -104,11 +105,11 @@ export default function showUtility({ pois, map, type, poiClick }) {
           <div>
             <div class="gou-utility-name gou-utility-detail-container">${poi.tags.name}</div>
             <div class="gou-utility-detail-container">
-              <span class="gou-utility-detail-title">Địa chỉ:</span> 
+              <span class="gou-utility-detail-title">Address (Địa chỉ):</span> 
               <span>số 133, đốc ngữ, ba đình, hà nội</span> 
             </div>
             <div class="gou-utility-detail-container">
-              <span class="gou-utility-detail-title">Distance:</span> 
+              <span class="gou-utility-detail-title">Distance (Khoảng cách):</span> 
               <span>${distance} m</span> 
             </div>
           </div>`

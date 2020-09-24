@@ -67,7 +67,7 @@ class StatisticPage extends React.Component {
                             }
                         },
                         title: {
-                            text: "Series A",
+                            text: "Giá/Price",
                             style: {
                                 color: "#FF1654"
                             }
@@ -89,7 +89,7 @@ class StatisticPage extends React.Component {
                             }
                         },
                         title: {
-                            text: "Series B",
+                            text: "Số lượng tin/Amount of real estate",
                             style: {
                                 color: "#247BA0"
                             }
@@ -331,26 +331,26 @@ class StatisticPage extends React.Component {
                                             <div class="kt-portlet" style={{ marginTop: "25px" }}>
                                                 <div className="kt-portlet__head">
                                                     <div className="kt-portlet__head-label">
-                                                        <h3 className="kt-portlet__head-title">1. Tham khoả giá bán/thuê và số lượng chào bán.thuê theo từng khu vực</h3>
+                                                        <h3 className="kt-portlet__head-title">1. {t('statistic:Price and the amount of real estate in a specific district')}</h3>
                                                     </div>
                                                 </div>
                                                 <div className="kt-portlet__body">
                                                     <div className="row">
                                                         <div className="col-lg-3">
                                                             <Select className='gou-antd-select' defaultValue="" onChange={this.handleChangeProvince1}>
-                                                                <Option value="">Tỉnh</Option>
+                                                                <Option value="">{t('province')}</Option>
                                                                 {provinces && provinces.map(province => { return (<Option value={province}>{province}</Option>) })}
                                                             </Select>
                                                         </div>
                                                         <div className="col-lg-3">
                                                             <Select className='gou-antd-select' defaultValue="" onChange={this.handleChangeDistrict1}>
-                                                                <Option value="">Huyện</Option>
+                                                                <Option value="">{t('district')}</Option>
                                                                 {districts1 && districts1.map(district => { return (<Option value={district}>{district}</Option>) })}
                                                             </Select>
                                                         </div>
                                                         <div className="col-lg-3">
                                                             <Select className='gou-antd-select' defaultValue="" onChange={this.handleChangeCategory1}>
-                                                                <Option value="">Loại</Option>
+                                                                <Option value="">{t('category')}</Option>
                                                                 <Option value="apartment">{t('common:apartment')}</Option>
                                                                 <Option value="house">{t('common:house')}</Option>
                                                                 <Option value="mansion">{t('common:mansion')}</Option>
@@ -371,11 +371,11 @@ class StatisticPage extends React.Component {
                                                         </div>
                                                         <div className="col-lg-3">
                                                             <Select defaultValue="" onChange={this.handleChangeMonth1}>
-                                                                <Option value="">Tháng</Option>
-                                                                <Option value={3}>3 tháng</Option>
-                                                                <Option value={6}>6 tháng</Option>
-                                                                <Option value={9}>9 tháng</Option>
-                                                                <Option value={12}>1 năm</Option>
+                                                                <Option value="">{t('month')}</Option>
+                                                                <Option value={3}>3 {t('month')}</Option>
+                                                                <Option value={6}>6 {t('month')}</Option>
+                                                                <Option value={9}>9 {t('month')}</Option>
+                                                                <Option value={12}>12 {t('month')}</Option>
                                                             </Select>
                                                         </div>
                                                     </div>
@@ -383,11 +383,11 @@ class StatisticPage extends React.Component {
                                                         <div class="col-lg-6">
                                                             <div class="kt-radio-inline">
                                                                 <label class="kt-radio">
-                                                                    <input type="radio" name="type1" value="sell" onChange={this.handleChangeType1} /> Bán
+                                                                    <input type="radio" name="type1" value="sell" onChange={this.handleChangeType1} /> {t('sell')}
                                                                     <span></span>
                                                                 </label>
                                                                 <label class="kt-radio">
-                                                                    <input type="radio" name="type1" value="rent" onChange={this.handleChangeType1} /> Cho thuê
+                                                                    <input type="radio" name="type1" value="rent" onChange={this.handleChangeType1} /> {t('rent')}
                                                                     <span></span>
                                                                 </label>
                                                             </div>
@@ -412,14 +412,14 @@ class StatisticPage extends React.Component {
                                             <div class="kt-portlet" style={{ marginTop: "25px" }}>
                                                 <div className="kt-portlet__head">
                                                     <div className="kt-portlet__head-label">
-                                                        <h3 className="kt-portlet__head-title">2. So sánh giá bán/thuê của từng khu vực</h3>
+                                                        <h3 className="kt-portlet__head-title">2. {t('statistic:Compare real estate prices in diffrent districts')} </h3>
                                                     </div>
                                                 </div>
                                                 <div className="kt-portlet__body">
                                                     <div className="row">
                                                         <div className="col-lg-3">
                                                             <Select className='gou-antd-select' defaultValue="" onChange={this.handleChangeProvince2}>
-                                                                <Option value="">Tỉnh</Option>
+                                                                <Option value="">{t('province')}</Option>
                                                                 {provinces && provinces.map(province => { return (<Option value={province}>{province}</Option>) })}
                                                             </Select>
                                                         </div>
@@ -434,7 +434,7 @@ class StatisticPage extends React.Component {
                                                         </div>
                                                         <div className="col-lg-3">
                                                             <Select className='gou-antd-select' defaultValue="" onChange={this.handleChangeCategory2}>
-                                                                <Option value="">Loại</Option>
+                                                                <Option value="">{t('category')}</Option>
                                                                 <Option value="apartment">{t('common:apartment')}</Option>
                                                                 <Option value="house">{t('common:house')}</Option>
                                                                 <Option value="mansion">{t('common:mansion')}</Option>
@@ -455,11 +455,11 @@ class StatisticPage extends React.Component {
                                                         </div>
                                                         <div className="col-lg-3">
                                                             <Select defaultValue="" onChange={this.handleChangeMonth2}>
-                                                                <Option value="">Tháng</Option>
-                                                                <Option value={3}>3 tháng</Option>
-                                                                <Option value={6}>6 tháng</Option>
-                                                                <Option value={9}>9 tháng</Option>
-                                                                <Option value={12}>1 năm</Option>
+                                                                <Option value="">{t('month')}</Option>
+                                                                <Option value={3}>3 {t('month')}</Option>
+                                                                <Option value={6}>6 {t('month')}</Option>
+                                                                <Option value={9}>9 {t('month')}</Option>
+                                                                <Option value={12}>12 {t('month')}</Option>
                                                             </Select>
                                                         </div>
                                                     </div>
@@ -467,11 +467,11 @@ class StatisticPage extends React.Component {
                                                         <div class="col-lg-6">
                                                             <div class="kt-radio-inline">
                                                                 <label class="kt-radio">
-                                                                    <input type="radio" name="type2" onChange={this.handleChangeType2} value="sell" /> Bán
+                                                                    <input type="radio" name="type2" onChange={this.handleChangeType2} value="sell" /> {t('sell')}
                                                                     <span></span>
                                                                 </label>
                                                                 <label class="kt-radio">
-                                                                    <input type="radio" name="type2" onChange={this.handleChangeType2} value="rent" /> Cho thuê
+                                                                    <input type="radio" name="type2" onChange={this.handleChangeType2} value="rent" /> {t('rent')}
                                                                     <span></span>
                                                                 </label>
                                                             </div>
@@ -497,14 +497,14 @@ class StatisticPage extends React.Component {
                                             <div class="kt-portlet" style={{ marginTop: "25px" }}>
                                                 <div className="kt-portlet__head">
                                                     <div className="kt-portlet__head-label">
-                                                        <h3 className="kt-portlet__head-title">3. So sánh số lượng chào bán/thuê của từng khu vực</h3>
+                                                        <h3 className="kt-portlet__head-title">3. {t('statistic:Compare prices and the amount of real estate in different districts')}</h3>
                                                     </div>
                                                 </div>
                                                 <div className="kt-portlet__body">
                                                     <div className="row">
                                                         <div className="col-lg-3">
                                                             <Select className='gou-antd-select' defaultValue="" onChange={this.handleChangeProvince3}>
-                                                                <Option value="">Tỉnh</Option>
+                                                                <Option value="">{t('province')}</Option>
                                                                 {provinces && provinces.map(province => { return (<Option value={province}>{province}</Option>) })}
                                                             </Select>
                                                         </div>
@@ -519,7 +519,7 @@ class StatisticPage extends React.Component {
                                                         </div>
                                                         <div className="col-lg-3">
                                                             <Select className='gou-antd-select' defaultValue="" onChange={this.handleChangeCategory3}>
-                                                                <Option value="">Loại</Option>
+                                                                <Option value="">{t('category')}</Option>
                                                                 <Option value="apartment">{t('common:apartment')}</Option>
                                                                 <Option value="house">{t('common:house')}</Option>
                                                                 <Option value="mansion">{t('common:mansion')}</Option>
@@ -540,11 +540,11 @@ class StatisticPage extends React.Component {
                                                         </div>
                                                         <div className="col-lg-3">
                                                             <Select defaultValue="" onChange={this.handleChangeMonth3}>
-                                                                <Option value="">Tháng</Option>
-                                                                <Option value={3}>3 tháng</Option>
-                                                                <Option value={6}>6 tháng</Option>
-                                                                <Option value={9}>9 tháng</Option>
-                                                                <Option value={12}>1 năm</Option>
+                                                                <Option value="">{t('month')}</Option>
+                                                                <Option value={3}>3 {t('month')}</Option>
+                                                                <Option value={6}>6 {t('month')}</Option>
+                                                                <Option value={9}>9 {t('month')}</Option>
+                                                                <Option value={12}>12 {t('month')}</Option>
                                                             </Select>
                                                         </div>
                                                     </div>
@@ -552,11 +552,11 @@ class StatisticPage extends React.Component {
                                                         <div class="col-lg-6">
                                                             <div class="kt-radio-inline">
                                                                 <label class="kt-radio">
-                                                                    <input type="radio" name="type3" onChange={this.handleChangeType3} value="sell" /> Bán
+                                                                    <input type="radio" name="type3" onChange={this.handleChangeType3} value="sell" /> {t('sell')}
                                                                     <span></span>
                                                                 </label>
                                                                 <label class="kt-radio">
-                                                                    <input type="radio" name="type3" onChange={this.handleChangeType3} value="rent" /> Cho thuê
+                                                                    <input type="radio" name="type3" onChange={this.handleChangeType3} value="rent" /> {t('rent')}
                                                                     <span></span>
                                                                 </label>
                                                             </div>
@@ -590,4 +590,4 @@ class StatisticPage extends React.Component {
     }
 }
 
-export default withTranslation(['common'])(StatisticPage);
+export default withTranslation(['common', 'statistic'])(StatisticPage);

@@ -175,7 +175,8 @@ class ManagePostsPage extends React.Component {
       {
         title: t('created at'),
         dataIndex: 'createdAt',
-        key: 'createdAt'
+        key: 'createdAt',
+        render: (text, record) => (record.createdAt.split("T")[0])
       },
       {
         title: t('publish status'),

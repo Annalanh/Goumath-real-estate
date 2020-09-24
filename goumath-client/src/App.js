@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from 'react';
+import React from 'react';
 import './App.css';
 import 'antd/dist/antd.css';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
@@ -34,12 +34,11 @@ class App extends React.Component{
       <>
         <BrowserRouter forceRefresh={true}>
           <Switch>
-            <Suspense fallback={<div>Loading...</div>}>
               <Route exact path="/login" component={LoginPage}/>
               <Route exact path="/signup" component={SignupPage}/>
               <Route exact path="/error" component={ErrorPage}/>
               <Route exact path="/" component={HomePage}/>
-              <Route exact path="/search" component={FilterREPage}/>
+              <Route exact path="/search/:province/:district/:type/:category/:priceRange/:areaRange" component={FilterREPage}/>
               <Route exact path="/predict" component={PredictPricePage}/>
               <Route exact path="/statistic" component={StatisticPage}/>
               
@@ -55,7 +54,6 @@ class App extends React.Component{
               <Route exact path="/need-buy-rent-post/detail/:postId" component={NeedBuyRentPostDetailPage}/>
               <Route exact path="/calculate-loan" component={CalculateLoanPage}/>
               <AdminRoute exact path="/admin" component={AdminPage}/>
-            </Suspense>
           </Switch>
         </BrowserRouter>
       </>

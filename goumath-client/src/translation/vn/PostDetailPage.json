@@ -1,5 +1,17 @@
 {
     "show map": "Hiển thị bản đồ",
     "utility map": "Bản đồ tiện ích",
-    "requirements": "Yêu cầu"
+    "requirements": "Yêu cầu",
+    "hospital": "Bệnh viện",
+    "university": "Đại học",
+    "medical supply":  "Cơ sở y tế",
+    "pharmacy": "Nhà thuốc",
+    "veterinary": "Thú y",
+    "kindergarten": "Mẫu giáo",
+    "school": "Trường học",
+    "college": "Cao đẳng",
+    "language school": "Trung tâm ngoại ngữ",
+    "music school": "Trung tâm dạy nhac, mỹ thuật, nấu ăn",
+    "mall": "Trung tâm thương mại",
+    "supermarket": "Siêu thị"
 }

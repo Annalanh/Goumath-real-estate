@@ -9,6 +9,7 @@ export const login = (token) => {
 //remove jwt token in localstorage
 export const logout = () => {
     localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem('role')
 }
 
 //check if jwt token is saved in localstorage and not expired

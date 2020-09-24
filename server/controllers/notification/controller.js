@@ -1,14 +1,15 @@
 const Notification = require('../../models/notification')
 class NotificationController {
     create(req, res) {
-        let { userId, postId, content } = req.body
+        let { userId, postId, content, postType } = req.body
         Notification.create({
             userId,
             postId,
+            postType,
             content,
         }).then(notiCreated => {
             if (notiCreated) {
-               res.send(notiCreated)
+               res.send({status: true, notiCreated })
             } else {
                 res.send({ status: false })
             }

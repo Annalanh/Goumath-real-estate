@@ -40,13 +40,14 @@ class AdminUpdatePostPage extends React.Component {
         this.setState({
             loading: true
         })
-        axios.get(`http://localhost:8081/post/all-posts?current=${params.pagination.current}&pageSize=${params.pagination.pageSize}&type=${params.filters.type}&publish_status=${params.filters.publish_status}`).then(data => {
+        axios.get(`http://localhost:8081/post/all-posts?current=${params.pagination.current}&pageSize=${params.pagination.pageSize}&type=${params.filters.type}&publish_status=${params.filters.publish_status}`).then(res => {
+            let resData = res.data
             this.setState({
                 loading: false,
-                data: data.data.results,
+                data: resData.results,
                 pagination: {
                     ...params.pagination,
-                    total: data.data.totalCount,
+                    total: resData.totalCount,
                 },
                 filters: {
                     ...params.filters
@@ -159,7 +160,8 @@ class AdminUpdatePostPage extends React.Component {
             {
                 title: t('created at'),
                 dataIndex: 'createdAt',
-                key: 'createdAt'
+                key: 'createdAt',
+                render: (text, record) => (record.createdAt.split("T")[0])
             },
             {
                 title: t('publish status'),

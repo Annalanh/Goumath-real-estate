@@ -21,7 +21,10 @@ import enNavBarNS from "./translation/en/NavBar.json"
 import vnNavBarNS from "./translation/vn/NavBar.json"
 import enFormNS from "./translation/en/Form.json"
 import vnFormNS from "./translation/vn/Form.json"
-
+import enCalculateLoanNS from "./translation/en/CalculateLoan.json"
+import vnCalculateLoanNS from "./translation/vn/CalculateLoan.json"
+import enStatisticNS from "./translation/en/Statistic.json"
+import vnStatisticNS from "./translation/vn/Statistic.json"
 const resources = {
     en: {
       common: enCommonNS,
@@ -33,7 +36,9 @@ const resources = {
       authPage: enAuthPageNS,
       asideBar: enAsideBarNS,
       navBar: enNavBarNS,
-      form: enFormNS
+      form: enFormNS,
+      calculateLoan: enCalculateLoanNS,
+      statistic: enStatisticNS
     },
     vn: {
       common: vnCommonNS,
@@ -45,7 +50,9 @@ const resources = {
       authPage: vnAuthPageNS,
       asideBar: vnAsideBarNS,
       navBar: vnNavBarNS,
-      form: vnFormNS
+      form: vnFormNS,
+      calculateLoan: vnCalculateLoanNS,
+      statistic: vnStatisticNS
     }
 };
 
@@ -56,8 +63,6 @@ const detectorOptions = {
   lookupLocalStorage: 'i18nextLng',
   lookupFromPathIndex: 0,
   lookupFromSubdomainIndex: 0,
-  // caches: ['localStorage', 'cookie'],
-  // excludeCacheFor: ['cimode'],
 }
 i18n
   .use(LngDetector)

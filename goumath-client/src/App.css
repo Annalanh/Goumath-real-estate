@@ -52,3 +52,9 @@
 .gou-radius-slider{
   margin-bottom: 2rem;
 }
+
+.gou-general-btn{
+  color: white;
+  background-color: #22b9ff;
+  height: 38px;
+}

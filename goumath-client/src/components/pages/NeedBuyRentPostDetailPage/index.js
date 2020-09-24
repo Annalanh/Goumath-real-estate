@@ -77,7 +77,7 @@ class SellRentPostDetail extends React.Component {
           contact_name: postInfo.contact_name,
           contact_phone: postInfo.contact_phone,
           contact_email: postInfo.contact_email,
-          createdAt: postInfo.createdAt,
+          createdAt: postInfo.createdAt.split("T")[0],
           author_avatar: postInfo.author.avatar
         }, () => {
           let { lat, lon, radius, displayCircle } = this.state
@@ -96,48 +96,6 @@ class SellRentPostDetail extends React.Component {
               this.drawCircle({ lat, lon, radius })
             })
           }
-
-          // let hospitalIcon = document.createElement('div');
-          // hospitalIcon.innerHTML = `
-          // <div class="pin">
-          //   <i class="fa fa-university"></i>
-          // </div>
-          // `
-
-          // let marker1 = new mapboxgl.Marker()
-          //   .setLngLat([105.7942275, 21.0546768])
-          //   .addTo(map);
-
-          // let marker2 = new mapboxgl.Marker(hospitalIcon)
-          //   .setLngLat([105.7938183, 21.0476192])
-          //   .addTo(map);
-
-          // let popup = new mapboxgl.Popup({
-          //   closeButton: false,
-          //   closeOnClick: false
-          // })
-          //   .setLngLat([105.7938183, 21.0476192])
-          //   .setHTML(`
-          //     <div>
-          //       <div class="gou-utility-name gou-utility-detail-container">Bệnh viện tâm thần</div>
-          //       <div class="gou-utility-detail-container">
-          //         <span class="gou-utility-detail-title">Địa chỉ:</span> 
-          //         <span>số 133, đốc ngữ, ba đình, hà nội</span> 
-          //       </div>
-          //       <div class="gou-utility-detail-container">
-          //         <span class="gou-utility-detail-title">Khoảng cách:</span> 
-          //         <span>12 km</span> 
-          //       </div>
-          //     </div>`
-          //   )
-
-          // marker2.getElement().addEventListener('mouseenter', () => {
-          //   popup.addTo(map);
-          // })
-
-          // marker2.getElement().addEventListener('mouseleave', () => {
-          //   popup.remove();
-          // })
         })
       }
     })
@@ -260,8 +218,23 @@ class SellRentPostDetail extends React.Component {
                                     </div>
 
                                   </div>
-                                  <div className="col-lg-6">
+                                  <div className="col-lg-3">
                                     Giá: <span>{this.state.price}</span>
+                                  </div>
+                                  <div className="col-lg-3">
+                                    {
+                                      this.state.isSaved ? (
+                                        <button className="btn gou-unsave-btn" onClick={this.handleUnsaveToFavorites} style={{ display: this.state.showSavePostBtn }}>
+                                          <i class="flaticon-download" style={{ marginRight: '5px' }}></i>
+                                          {t('common:unsave post')}
+                                        </button>
+                                      ) : (
+                                          <button className="btn gou-save-btn" onClick={this.handleSaveToFavorites} style={{ display: this.state.showSavePostBtn }}>
+                                            <i class="flaticon-download" style={{ marginRight: '5px' }}></i>
+                                            {t('common:save post')}
+                                          </button>
+                                        )
+                                    }
                                   </div>
                                 </div>
                                 <div className="row gou-detail-section">

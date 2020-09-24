@@ -14,6 +14,7 @@ import AsideBar from '../../layouts/AsideBar'
 import Footer from '../../layouts/Footer'
 import { validateEmail, validatePhone } from '../../../utils/form-validation'
 import { getUserRole } from '../../../utils/auth'
+import { createContent } from '../../../utils/notification'
 
 const { Option } = Select;
 
@@ -35,10 +36,12 @@ class UpdateSellRentPostPage extends React.Component {
       previewImage: '',
       previewTitle: '',
       fileList: [],
+      authorId: '',
       lat: '',
       lon: '',
       transaction_status: '',
       publish_status: '',
+      initial_publish_status: '',
       province: '',
       district: '',
       ward: '',
@@ -63,7 +66,8 @@ class UpdateSellRentPostPage extends React.Component {
       business_usable: false,
       car_parking: false,
       fully_furnitured: false,
-      posted_by_landholder: false
+      posted_by_landholder: false,
+      disabled: false
     };
   }
 
@@ -78,6 +82,7 @@ class UpdateSellRentPostPage extends React.Component {
       data: { postId, userId }
     }).then(res => {
       let resData = res.data
+      console.log(res)
       if (resData.status) {
         let postInfo = resData.post
         let fileList = []
@@ -92,10 +97,12 @@ class UpdateSellRentPostPage extends React.Component {
         this.setState({
           loading: false,
           fileList,
+          authorId: postInfo.author._id,
           lat: postInfo.lat,
           lon: postInfo.lon,
           transaction_status: postInfo.transaction_status,
           publish_status: postInfo.publish_status,
+          initial_publish_status:postInfo.publish_status,
           province: postInfo.province,
           district: postInfo.district,
           ward: postInfo.ward,
@@ -232,6 +239,14 @@ class UpdateSellRentPostPage extends React.Component {
     this.setState({ house_no: e.target.value})
   }
 
+  handleSendNoti = ({ authorId, postId, type, content }) => {
+    this.context.emit('noti:send', { authorId, postId, type, content});
+  }
+  handleChangePriceUnit = (value) => { 
+    if(value === "deal") this.setState({ disabled: true }) 
+    else this.setState({ disabled: false}) 
+  }
+
   render() {
     const { t } = this.props
     const pathname = this.props.location.pathname
@@ -243,10 +258,12 @@ class UpdateSellRentPostPage extends React.Component {
       previewImage,
       fileList,
       previewTitle,
+      authorId, 
       lat,
       lon,
       transaction_status,
       publish_status,
+      initial_publish_status,
       province,
       district,
       ward,
@@ -271,7 +288,8 @@ class UpdateSellRentPostPage extends React.Component {
       business_usable,
       car_parking,
       fully_furnitured,
-      posted_by_landholder
+      posted_by_landholder,
+      disabled
     } = this.state;
 
     let initialProfile = {
@@ -312,7 +330,6 @@ class UpdateSellRentPostPage extends React.Component {
 
             <div className="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor kt-wrapper" id="kt_wrapper">
               <NavBar />
-
               <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 {
                   loading ? (
@@ -401,7 +418,20 @@ class UpdateSellRentPostPage extends React.Component {
                                     if (resData.status) {
                                       swal(t("common:success"), t(resData.message), "success")
                                         .then(value => {
-                                          if (value) window.location.href = "/manage-posts"
+                                          if (value) {
+                                            if(initial_publish_status != publish_status){
+                                              const content = createContent({ title, publish_status })
+                                              axios({
+                                                url: "http://localhost:8081/notification/create",
+                                                method: "POST",
+                                                data: { userId: authorId, postId, content, postType: 'sell-rent' }
+                                              }).then(res => {
+                                                let resData = res.data
+                                                if(resData.status) this.handleSendNoti({ authorId, postId, type: "sell-rent", content })
+                                                //window.location.href = "/manage-posts"
+                                              })
+                                            }
+                                          }
                                         })
                                     } else {
                                       swal(t("common:error"), t(resData.message), "error")
@@ -418,7 +448,6 @@ class UpdateSellRentPostPage extends React.Component {
                                   if (!values.num_bedroom) errors.num_bedroom = 'Required'
                                   if (!values.num_bathroom) errors.num_bathroom = 'Required'
                                   if (!values.num_floor) errors.num_floor = 'Required'
-                                  if (!values.price) errors.price = 'Required'
                                   if (!values.contact_name) errors.contact_name = 'Required'
                                   if (!values.contact_phone) errors.contact_phone = 'Required'
                                   else if (!validatePhone(values.contact_phone)) errors.contact_phone = "Invalid number";
@@ -659,6 +688,7 @@ class UpdateSellRentPostPage extends React.Component {
                                                 value={props.values.price}
                                                 onChange={props.handleChange}
                                                 onBlur={props.handleBlur}
+                                                disabled={disabled}
                                               />
                                               {props.errors.price && props.touched.price && <div className="gou-invalid-feedback">{props.errors.price}</div>}
                                             </div>
@@ -666,7 +696,7 @@ class UpdateSellRentPostPage extends React.Component {
                                           <div className="form-group row">
                                             <label className="col-lg-3 col-form-label">{t('common:price unit')}:</label>
                                             <div className="col-lg-6">
-                                              <Select className="gou-antd-select" value={props.values.price_unit} onChange={(value) => { props.setFieldValue('price_unit', value) }} name="price_unit">
+                                              <Select className="gou-antd-select" value={props.values.price_unit} onChange={(value) => { props.setFieldValue('price_unit', value);if(value === "deal") { props.setFieldValue('price', 0)};this.handleChangePriceUnit(value) }} name="price_unit">
                                                 <Option value="vnd">VND</Option>
                                                 <Option value="million/m2">{t('common:million')}/m2</Option>
                                                 <Option value="deal">{t('common:deal')}</Option>
@@ -849,4 +879,4 @@ class UpdateSellRentPostPage extends React.Component {
   }
 }
 
-export default withTranslation(['updatePostPage', 'common'])(UpdateSellRentPostPage);
+export default withTranslation(['common'])(UpdateSellRentPostPage);

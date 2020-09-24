@@ -13,13 +13,15 @@ class UserController {
 
         User.findOne({ username }, function (err, userInfo) {
             if (err) res.send({ status: false, message: "User not found!" })
-            else res.send({ status: true, userInfo })
+            else {
+                res.send({ status: true, userInfo })
+            }
         })
     }
 
     updateUserById(req, res) {
-        let { fullname, username, email, phone, password, dob, gender, address, role, userId, defaultAvatar } = req.query
-        let newUserData = { fullname, username, email, phone, dob, gender, address, role }
+        let { fullname, username, email, phone, password, dob, gender, address, role, userId, defaultAvatar, register_province, register_district, is_register } = req.query
+        let newUserData = { fullname, username, email, phone, dob, gender, address, role, register_province, register_district, is_register }
         let form = formidable({ multiples: true })
 
         if (password !== '') newUserData.password = password
@@ -66,6 +68,7 @@ class UserController {
                 })
             }
         })
+    
     }
 
     changePassword(req, res) {

@@ -43,6 +43,7 @@ class NewSellRentPostPage extends React.Component {
       ward: '',
       street: '',
       house_no: '',
+      disabled: false
     };
   }
 
@@ -152,6 +153,11 @@ class NewSellRentPostPage extends React.Component {
     this.setState({ house_no: e.target.value})
   }
 
+  handleChangePriceUnit = (value) => { 
+    if(value === "deal") this.setState({ disabled: true }) 
+    else this.setState({ disabled: false}) 
+  }
+
   render() {
     const { t } = this.props
     const {
@@ -167,7 +173,8 @@ class NewSellRentPostPage extends React.Component {
       district,
       ward,
       street,
-      house_no
+      house_no, 
+      disabled
     } = this.state;
     let initialProfile = {
       title: '',
@@ -294,6 +301,7 @@ class NewSellRentPostPage extends React.Component {
                             const requiredError = t('form:required')
                             const invalidPhoneNumber = t('form:invalid phone number')
                             const invalidEmail = t('form:invalid email')
+                            console.log(values)
 
                             if (!values.title) errors.title = requiredError
                             if (!values.type) errors.type = requiredError
@@ -302,7 +310,7 @@ class NewSellRentPostPage extends React.Component {
                             if (!values.num_bedroom) errors.num_bedroom = requiredError
                             if (!values.num_bathroom) errors.num_bathroom = requiredError
                             if (!values.num_floor) errors.num_floor = requiredError
-                            if (!values.price) errors.price = requiredError
+                            // if (!values.price && values.price != 0) errors.price = requiredError
                             if (!values.contact_name) errors.contact_name = requiredError
                             if (!values.contact_phone) errors.contact_phone = requiredError
                             else if (!validatePhone(values.contact_phone)) errors.contact_phone = invalidPhoneNumber;
@@ -543,6 +551,7 @@ class NewSellRentPostPage extends React.Component {
                                           value={props.values.price}
                                           onChange={props.handleChange}
                                           onBlur={props.handleBlur}
+                                          disabled={disabled}
                                         />
                                         {props.errors.price && props.touched.price && <div className="gou-invalid-feedback">{t(props.errors.price)}</div>}
                                       </div>
@@ -550,7 +559,7 @@ class NewSellRentPostPage extends React.Component {
                                     <div className="form-group row">
                                       <label className="col-lg-3 col-form-label">{t('common:price unit')}:</label>
                                       <div className="col-lg-6">
-                                        <Select className='gou-antd-select' value={props.values.price_unit} onChange={(value) => { props.setFieldValue('price_unit', value) }} name="price_unit">
+                                        <Select className='gou-antd-select' value={props.values.price_unit} onChange={(value) => { props.setFieldValue('price_unit', value); if(value === "deal") { props.setFieldValue('price', 0)};this.handleChangePriceUnit(value)}} name="price_unit">
                                           <Option value="vnd">VND</Option>
                                           <Option value="million/m2">{t('common:million')}/m2</Option>
                                           <Option value="deal">{t('common:deal')}</Option>
