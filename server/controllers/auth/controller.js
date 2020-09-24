@@ -86,7 +86,7 @@ class AuthenticationController {
                                             password: hash
                                         }
                                         const token = jwt.sign(payload, 'privateKey', { expiresIn: 600 });
-                                        res.send({ status: true, token, username })
+                                        res.send({ status: true, token, username, userId: userCreated._id })
                                     } else {
                                         res.send({ status: false })
                                     }
