@@ -26545,7 +26545,7 @@ strong {
     .kt-nav .kt-nav__item.kt-nav__item--last {
       padding-bottom: 0; }
     .kt-nav .kt-nav__item.kt-nav__item--active > .kt-nav__link, .kt-nav .kt-nav__item.active > .kt-nav__link, .kt-nav .kt-nav__item:hover:not(.kt-nav__item--disabled):not(.kt-nav__item--sub) > .kt-nav__link {
-      background-color: #f7f8fa;
+      background-color: #ebe4de;
       -webkit-transition: all 0.3s;
       transition: all 0.3s; }
       .kt-nav .kt-nav__item.kt-nav__item--active > .kt-nav__link .kt-nav__link-icon,
@@ -26555,7 +26555,7 @@ strong {
       .kt-nav .kt-nav__item.active > .kt-nav__link .kt-nav__link-arrow, .kt-nav .kt-nav__item:hover:not(.kt-nav__item--disabled):not(.kt-nav__item--sub) > .kt-nav__link .kt-nav__link-icon,
       .kt-nav .kt-nav__item:hover:not(.kt-nav__item--disabled):not(.kt-nav__item--sub) > .kt-nav__link .kt-nav__link-text,
       .kt-nav .kt-nav__item:hover:not(.kt-nav__item--disabled):not(.kt-nav__item--sub) > .kt-nav__link .kt-nav__link-arrow {
-        color: #22b9ff; }
+        color: #1a223c; }
       .kt-nav .kt-nav__item.kt-nav__item--active > .kt-nav__link .kt-nav__link-icon g [fill], .kt-nav .kt-nav__item.active > .kt-nav__link .kt-nav__link-icon g [fill], .kt-nav .kt-nav__item:hover:not(.kt-nav__item--disabled):not(.kt-nav__item--sub) > .kt-nav__link .kt-nav__link-icon g [fill] {
         -webkit-transition: fill 0.3s ease;
         transition: fill 0.3s ease;

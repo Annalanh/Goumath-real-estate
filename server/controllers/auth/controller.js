@@ -18,7 +18,7 @@ class AuthenticationController {
                         password
                     }
                     const token = jwt.sign(payload, 'privateKey', { expiresIn: 6000 });
-                    res.send({ status: true, message: 'Signin success', token, username, userId: userFound._id })
+                    res.send({ status: true, message: 'Signin success', token, username, userId: userFound._id, is_admin: userFound.is_admin })
                 } else {
                     res.send({ status: false, message: 'wrong username or password' })
                 }

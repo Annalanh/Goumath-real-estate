@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 import { withTranslation } from 'react-i18next';
 import { Select } from 'antd';
 import './style.css'
@@ -7,6 +8,8 @@ import NavBar from '../../layouts/NavBar'
 import AsideBar from '../../layouts/AsideBar'
 import Footer from '../../layouts/Footer'
 import { provinces, districts } from '../../../utils/geoData'
+import { generateAddress } from '../../../utils/address'
+import SellRentIntroCard from '../../layouts/SellRentIntroCard'
 
 const { Option } = Select;
 
@@ -20,8 +23,49 @@ class HomePage extends React.Component {
       province: null,
       district: null,
       priceRange: null,
-      areaRange: null
+      areaRange: null,
+      recentSellPosts: [],
+      recentRentPosts: []
     }
+  }
+
+  componentDidMount = () => {
+    axios({
+      url: `http://localhost:8081/post/all-sell-posts-homepage`,
+      method: "GET"
+    }).then(res => {
+      let resData = res.data
+      if (resData.status) {
+        let data = []
+        resData.recentSellPosts.forEach(post => {
+          let { title, type, area, price, list_img, _id, num_bathroom, num_bedroom } = post
+          let listAddress = [post.house_no, post.street, post.ward, post.district, post.province]
+          let address = generateAddress(listAddress)
+          data.push({ address, title, type, area, price, list_img, _id, num_bathroom, num_bedroom })
+        })
+        this.setState({ recentSellPosts: data })
+      } else {
+        console.log(resData.err)
+      }
+    })
+    axios({
+      url: `http://localhost:8081/post/all-rent-posts-homepage`,
+      method: "GET"
+    }).then(res => {
+      let resData = res.data
+      if (resData.status) {
+        let data = []
+        resData.recentRentPosts.forEach(post => {
+          let { title, type, area, price, list_img, _id, num_bathroom, num_bedroom } = post
+          let listAddress = [post.house_no, post.street, post.ward, post.district, post.province]
+          let address = generateAddress(listAddress)
+          data.push({ address, title, type, area, price, list_img, _id, num_bathroom, num_bedroom })
+        })
+        this.setState({ recentRentPosts: data })
+      } else {
+        console.log(resData.err)
+      }
+    })
   }
 
   handleChangeProvince = (value) => {
@@ -57,7 +101,7 @@ class HomePage extends React.Component {
   }
   render() {
     const { t } = this.props
-    let { province, districts1 } = this.state
+    let { province, districts1, recentSellPosts, recentRentPosts } = this.state
     return (
       <>
         <MobileNavBar />
@@ -70,11 +114,10 @@ class HomePage extends React.Component {
 
               <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
 
-                <div className="kt-subheader-search ">
+                <div className="kt-subheader-search" style={{ backgroundImage: "url(/assets/gou-imgs/homepage-banner.jpg)", backgroundRepeat: "no-repeat", backgroundSize: "100% 100%", height: "500px", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
                   <div className="kt-container  kt-container--fluid ">
                     <h3 className="kt-subheader-search__title">
-                      {t('search for appropriate real estate')}
-                      <span className="kt-subheader-search__desc">{t('fill in the form to')} {t('search for appropriate real estate')}</span>
+                      <span className="kt-subheader-search__desc"></span>
                     </h3>
                     <form className="kt-form row" onSubmit={this.handleFilter}>
                       <div className="col-lg-10">
@@ -154,24 +197,78 @@ class HomePage extends React.Component {
 
                       </div>
                       <div className="col-lg-2 gou-filter-btn">
-                        <button type="submit" className="btn btn-pill btn-upper btn-bold btn-font-sm kt-subheader-search__submit-btn">{t('search')}</button>
+                        <button type="submit" class="btn gou-save-btn" style={{ marginRight: "10px" }}>{t('search')}</button>
                       </div>
                     </form>
                   </div>
                 </div>
 
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                  <div className="row">
-                    <div class="col-12 gou-card-list-title" style={{ marginBottom: "20px" }}>Tin thuê cho bạn</div>
+                  <div className="row" style={{ justifyContent: "center" }}>
+                    <div style={{ width: "50%" }}>
+                      <h2 style={{ textAlign: "center", color: "#1a223c" }}>{t('homePage:Features intro')}</h2>
+                    </div>
                   </div>
-                  <div className="row">
+                  <hr style={{ width: "20%", border: "1px solid #1a223c", textAlign: "center" }} />
 
-                  </div>
-                  <div className="row">
-                    <div class="col-12 gou-card-list-title" style={{ marginBottom: "20px" }}>Tin bán cho bạn</div>
-                  </div>
-                  <div className="row">
 
+
+                  <div className="row" style={{ marginBottom: "15px" }}>
+                    <div className="col-md-3" style={{ display: "flex", alignItems: "center", flexDirection: "column", height: "300px" }}>
+                      <div style={{ height: "50%", display: "flex", justifyContent: "center", alignItems: "center" }}>
+                        <img src="/assets/gou-imgs/homepage-search-house.png" style={{ width: "50%", height: "100%" }} />
+                      </div>
+                      <h3 style={{ fontWeight: "bold", color: "#1a223c" }}>{t('homePage:find houses')}</h3>
+                      <div>{t(`homePage:find houses description`)}</div>
+                    </div>
+                    <div className="col-md-3" style={{ display: "flex", alignItems: "center", flexDirection: "column", height: "300px" }}>
+                      <div style={{ height: "50%", display: "flex", justifyContent: "center", alignItems: "center" }}>
+                        <img src="/assets/gou-imgs/homepage-post-manage.png" style={{ width: "50%", height: "100%" }} />
+                      </div>
+                      <h3 style={{ fontWeight: "bold", color: "#1a223c" }}>{t('homePage:manage posts')}</h3>
+                      <div>{t(`homePage:manage posts description`)}</div>
+                    </div>
+                    <div className="col-md-3" style={{ display: "flex", alignItems: "center", flexDirection: "column", height: "300px" }}>
+                      <div style={{ height: "50%", display: "flex", justifyContent: "center", alignItems: "center" }}>
+                        <img src="/assets/gou-imgs/homepage-calculate-price.png" style={{ width: "50%", height: "100%" }} />
+                      </div>
+                      <h3 style={{ fontWeight: "bold", color: "#1a223c" }}>{t('homePage:calculation tools')}</h3>
+                      <div>{t(`homePage:calculation tools description`)}</div>
+                    </div>
+                    <div className="col-md-3" style={{ display: "flex", alignItems: "center", flexDirection: "column", height: "300px" }}>
+                      <div style={{ height: "50%", display: "flex", justifyContent: "center", alignItems: "center" }}>
+                        <img src="/assets/gou-imgs/homepage-market.png" style={{ width: "50%", height: "100%" }} />
+                      </div>
+                      <h3 style={{ fontWeight: "bold", color: "#1a223c" }}>{t('homePage:price prediction')}</h3>
+                      <div>{t(`homePage:price prediction description`)}</div>
+                    </div>
+                  </div>
+
+
+
+
+
+                  <h3 style={{ textAlign: "center", marginTop: "50px" }}>{t("homePage:recent houses for sale")}</h3>
+                  <hr style={{ width: "20%", border: "1px solid #1a223c", textAlign: "center" }} />
+                  <div>
+                    <div className="row">
+                      {
+                        recentSellPosts.map(post => {
+                          return <SellRentIntroCard title={post.title} area={post.area} price={post.price} address={post.address} type={post.type} list_img={post.list_img} postId={post._id} num_bathroom={post.num_bathroom} num_bedroom={post.num_bedroom} />
+                        })
+                      }
+                    </div>
+                  </div>
+                  <h3 style={{ textAlign: "center", textAlign: "center", marginTop: "50px" }}>{t("homePage:recent houses for rent")}</h3>
+                  <hr style={{ width: "20%", border: "1px solid #1a223c", textAlign: "center" }} />
+                  <div>
+                    <div className="row">
+                      {
+                        recentRentPosts.map(post => {
+                          return <SellRentIntroCard title={post.title} area={post.area} price={post.price} address={post.address} type={post.type} list_img={post.list_img} postId={post._id} num_bathroom={post.num_bathroom} num_bedroom={post.num_bedroom} />
+                        })
+                      }
+                    </div>
                   </div>
                 </div>
 

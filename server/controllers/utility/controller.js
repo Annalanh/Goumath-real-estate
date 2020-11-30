@@ -13,6 +13,10 @@ const utilities = [
     { type: 'music_school', k: 'amenity', v: 'music_school' },
     { type: 'mall', k: 'shop', v: 'mall' },
     { type: 'supermarket', k: 'shop', v: 'supermarket' },
+    { type: 'bank', k: 'amenity', v: 'bank' },
+    { type: 'cafe', k: 'amenity', v: 'cafe' },
+    { type: 'marketplace', k: 'amenity', v: 'marketplace' },
+    { type: 'parking', k: 'amenity', v: 'parking' },
 ];
 function getUtility(type) {
     return utilities.filter(utility => utility.type == type)[0]
@@ -50,12 +54,26 @@ class UtilityController {
             res.send(result)
         }).catch(() => { res.send([]) })
     }
+    getAllUtilitiesPredict(req, res) {
+        let { lat, lon, radius } = req.query
+        let checkedTypes = ['bank', 'cafe', 'college', 'hospital', 'marketplace', 'parking', 'school', 'university']
+        let arr = []
+        checkedTypes.forEach((val) => {
+            arr.push(getOne(getUtility(val), lat, lon, Number(radius)))
+        })
+        Promise.all(arr).then((docs) => {
+            let result = []
+            docs.forEach((doc, index) => {
+                result.push({ type: checkedTypes[index], point: docs[index] })
+            })
+            res.send(result)
+        }).catch((e) => {res.send([]) })
+    }
     async getOneUtility(req, res) {
         try {
             const rs = await getOne(getUtility(req.query.type), req.query.lat, req.query.lon, req.query.radius)
             res.send(rs)
         } catch (error) {
-            console.log(error)
             res.send([])
         }
     }

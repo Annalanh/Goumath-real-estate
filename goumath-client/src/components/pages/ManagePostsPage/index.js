@@ -243,15 +243,15 @@ class ManagePostsPage extends React.Component {
                           <Button onClick={this.handleFilterSell} className="gou-toolbar-item">{t('common:sell')}</Button>
                           <Button onClick={this.handleFilterRent} className="gou-toolbar-item">{t('common:rent')}</Button>
                           <Button onClick={this.handleFilterNeedBuy} className="gou-toolbar-item">{t('common:need buy')}</Button>
-                          <Button onClick={this.handleFilterNeedRent} className="gou-toolbar-item">{t('common:need rent')}</Button>
-                          <Select defaultValue="null" onChange={this.handleFilterPublishStatus} className="gou-toolbar-item" style={{ width: 120 }}>
+                          <Button onClick={this.handleFilterNeedRent} className="gou-toolbar-item gou-publish-status-filter-select">{t('common:need rent')}</Button>
+                          <Select defaultValue="null" onChange={this.handleFilterPublishStatus} className="gou-toolbar-item gou-publish-status-filter-select" style={{ width: 120 }}>
                             <Option value="null">{t('common:all')}</Option>
                             <Option value="pending">{t('common:pending')}</Option>
                             <Option value="approved">{t('common:approved')}</Option>
                             <Option value="refused">{t('common:refused')}</Option>
                             <Option value="expired">{t('common:expired')}</Option>
                           </Select>
-                          <Button onClick={this.handleClearFilters} className="gou-toolbar-item">{t('common:clear filter')}</Button>
+                          <Button onClick={this.handleClearFilters} className="gou-toolbar-item gou-publish-status-filter-select">{t('common:clear filter')}</Button>
                           <Dropdown overlay={uploadMenu} placement="bottomRight">
                             <button className="btn gou-new-post-btn">{t('common:upload')}</button>
                           </Dropdown>

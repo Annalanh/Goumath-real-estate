@@ -52,6 +52,20 @@ function calcPriceInNumber({ price, area, price_unit}){
     }
 }
 class PostController {
+    getSellPostsForHomepage(req, res){
+        Post.find({ type: "sell"}).limit(8).sort({ createdAt: -1 }).exec((err, data) => {
+            if(err) res.send({ status: false, err })
+            else res.send({ status: true, recentSellPosts: data })
+        })
+    }
+
+    getRentPostsForHomepage(req, res){
+        Post.find({ type: "rent"}).limit(8).sort({ createdAt: -1 }).exec((err, data) => {
+            if(err) res.send({ status: false, err })
+            else res.send({ status: true, recentRentPosts: data })
+        })
+    }
+
     getPostsByUserId(req, res) {
         let current = Number(req.query.current)
         let pageSize = Number(req.query.pageSize)

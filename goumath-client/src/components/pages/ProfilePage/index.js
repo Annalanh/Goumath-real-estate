@@ -57,9 +57,9 @@ class ProfilePage extends React.Component {
                     username: userInfo.username,
                     phone: userInfo.phone,
                     email: userInfo.email,
-                    dob: userInfo.dob ?userInfo.dob.split("T")[0] : '',
+                    dob: userInfo.dob ? userInfo.dob.split("T")[0] : '',
                     gender: userInfo.gender,
-                    address: userInfo.address,
+                    address: userInfo.address == "undefined"? "":userInfo.address,
                     role: userInfo.role,
                     is_register: userInfo.is_register,
                     register_province: userInfo.register_province,
@@ -147,6 +147,7 @@ class ProfilePage extends React.Component {
             address,
             role
         }
+        console.log(initialProfile)
         return (
             <>
                 <MobileNavBar />
@@ -439,14 +440,10 @@ class ProfilePage extends React.Component {
                                                                         </a>
                                                                     </div>
 
-                                                                    <div className="kt-portlet__foot">
+                                                                    <div className="kt-portlet__foot" style={{ display: "flex", justifyContent: "center" }}>
                                                                         <div className="kt-form__actions">
-                                                                            <div className="row">
-                                                                                <div className="col-lg-6">
-                                                                                    <button type="submit" style={{ marginRight: "10px" }} className="btn gou-save-btn">{t('form:save')}</button>
-                                                                                    <button type="reset" className="btn gou-reset-btn" onClick={props.handleReset}>{t('form:reset')}</button>
-                                                                                </div>
-                                                                            </div>
+                                                                            <button type="submit" style={{ marginRight: "10px" }} className="btn gou-save-btn">{t('form:save')}</button>
+                                                                            <button type="reset" className="btn gou-reset-btn" onClick={props.handleReset}>{t('form:reset')}</button>
                                                                         </div>
                                                                     </div>
                                                                 </form>

@@ -1,18 +1,25 @@
-.gou-toolbar{
-    margin-bottom: 16px; 
-    margin-top: 16px;
-    display: flex
+.gou-toolbar {
+  margin-bottom: 16px;
+  margin-top: 16px;
+  display: flex;
 }
-
-.gou-toolbar-item{
-    margin: 0px 5px
+.gou-new-post-btn-1 {
+  margin-left: auto;
+  background-color: #1a223c;
+  color: white;
 }
-.gou-new-post-btn-1{
-    margin-left: auto;
-    background-color: #22b9ff;
-    color: white
+.gou-new-post-btn:hover {
+  opacity: 0.8;
+  color: white;
 }
-.gou-new-post-btn:hover{
-    opacity: 0.8;
-    color: white
+.gou-toolbar-item {
+  margin: 0px 5px;
+}
+.gou-toolbar-item:hover {
+  border: 1px solid #1a223c;
+  color: #1a223c;
+}
+.gou-toolbar-item:focus {
+  border: 1px solid #1a223c;
+  color: #1a223c;
 }

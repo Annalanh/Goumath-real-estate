@@ -15,6 +15,7 @@ const postRouter = require('./controllers/post/router')
 const utilityRouter = require('./controllers/utility/router')
 const notificationRouter = require('./controllers/notification/router')
 const mailRouter = require('./controllers/mail/router')
+const predictRouter = require('./controllers/predict/router')
 
 app.use(cors());
 app.options('*', cors());
@@ -44,7 +45,6 @@ io.on('connection', function (socket) {
         socket.broadcast.emit('noti:respond', data);
     });
 })
-
 /**
  * use authentication router
  */
@@ -54,5 +54,6 @@ app.use("/post", postRouter)
 app.use("/utility", utilityRouter)
 app.use("/notification", notificationRouter)
 app.use("/mail", mailRouter)
+app.use("/predict", predictRouter)
 
 server.listen(process.env.PORT || 8081);

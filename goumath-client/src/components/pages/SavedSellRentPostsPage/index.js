@@ -169,7 +169,7 @@ class SavedSellRentPostsPage extends React.Component {
                                         {
                                             data.map(post => {
                                                 return (
-                                                    <SellRentIntroCard title={post.title} area={post.area} price={post.price} address={post.address} type={post.type} list_img={post.list_img} postId={post._id} />
+                                                    <SellRentIntroCard title={post.title} area={post.area} price={post.price} address={post.address} type={post.type} list_img={post.list_img} postId={post._id} num_bathroom={post.num_bathroom} num_bedroom={post.num_bedroom}/>
                                                 )
                                             })
                                         }

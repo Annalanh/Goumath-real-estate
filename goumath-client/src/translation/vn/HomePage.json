@@ -1,3 +1,14 @@
 {
-    "Post for you": "Tin cho bạn"
+    "Post for you": "Tin cho bạn",
+    "Features intro": "Chúng tôi cung cấp những gì bạn cần để thực hiện mua bán bất động sản",
+    "find houses": "Tìm nhà",
+    "manage posts": "Quản lý bài đăng",
+    "calculation tools": "Các công cụ tính toán",
+    "price prediction": "Dự đoán giá nhà đất",
+    "find houses description": "Tìm kiếm nhà trên mọi tỉnh thành tại Việt Nam. Hỗ trợ tìm kiếm theo vị trí, giá, diện tích, loại nhà,...",
+    "manage posts description": "Đăng tin bán, cho thuê, cần mua, cần thuê và cập nhật hoặc xoá các bài đăng này dưới sự kiểm duyệt của người quản trị trang. Ngoài ra bạn có thể lưu các tin đăng mình quan tâm và xem giá thị trường.",
+    "calculation tools description": "Hỗ trợ tính tiền vay dựa theo tiền gốc, lãi suất ngân hàng và thời hạn vay một cách chính xác.",
+    "price prediction description": "Dự đoán giá nhà bán dựa theo vị trí, số tầng, số phòng ngủ và số lượng nhà tắm.",
+    "recent houses for sale": "Nhà rao bán mới nhất",
+    "recent houses for rent": "Nhà cho thuê mới nhất"
 }

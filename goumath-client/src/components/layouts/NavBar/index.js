@@ -12,13 +12,38 @@ class NavBar extends React.Component {
         super(props)
         this.state = {
             notiList: [],
-            notiCount: 0
+            notiCount: 0,
+            en_active: "",
+            vn_active: "",
+            homepage_active: "",
+            sell_active: "",
+            rent_active: "",
+            utility_active: ""
         }
         this.handleVNTrans = this.handleVNTrans.bind(this);
         this.handleEngTrans = this.handleEngTrans.bind(this);
 
     }
     componentDidMount = () => {
+        if(localStorage.getItem("i18nextLng") == "vn"){
+            this.setState({ en_active: "", vn_active: "kt-nav__item--active"})
+        }else{
+            this.setState({ en_active: "kt-nav__item--active", vn_active: ""})
+        }
+        let currentPath = window.location.pathname
+        let currentPathEls = currentPath.split("/")
+
+        if(currentPathEls[1] == ""){
+            this.setState({ homepage_active: "kt-menu__item--active", sell_active: "", rent_active: "", utility_active: "" })
+        }else if(currentPathEls[1] == "search" && currentPathEls[4] == "sell"){
+            this.setState({ homepage_active: "", sell_active: "kt-menu__item--active", rent_active: "", utility_active: "" })
+        }else if(currentPathEls[1] == "search" && currentPathEls[4] == "rent"){
+            this.setState({ homepage_active: "", sell_active: "", rent_active: "kt-menu__item--active", utility_active: "" })
+        }else if(currentPathEls[1] == "calculate-loan" || currentPathEls[1] == "statistic" || currentPathEls[1] == "predict"){
+            this.setState({ homepage_active: "", sell_active: "", rent_active: "", utility_active: "kt-menu__item--active" })
+        }
+
+        console.log(currentPathEls)
         axios({
             url: `http://localhost:8081/notification/all-notis?userId=${localStorage.getItem('userId')}`,
             method: "GET"
@@ -73,12 +98,14 @@ class NavBar extends React.Component {
         const { i18n } = this.props
         i18n.changeLanguage('en');
         localStorage.setItem('i18nextLng', 'en')
+        this.setState({ en_active: "kt-nav__item--active", vn_active: ""})
     }
 
     handleVNTrans() {
         const { i18n } = this.props
         i18n.changeLanguage('vn');
         localStorage.setItem('i18nextLng', 'vn')
+        this.setState({ en_active: "", vn_active: "kt-nav__item--active"})
     }
 
     handleClickLoginIcon() {
@@ -87,21 +114,22 @@ class NavBar extends React.Component {
 
     render() {
         const { t } = this.props
+        const { en_active, vn_active, homepage_active, sell_active, rent_active, utility_active } = this.state
         return (
             <>
                 <Event event="respond:test" handler={this.handleEventResponse} />
                 <Event event="noti:respond" handler={this.handleEventResponse} />
-                <div id="kt_header" className="kt-header kt-grid kt-grid--ver  kt-header--fixed ">
+                <div id="kt_header" className="kt-header kt-grid kt-grid--ver  kt-header--fixed" style={{backgroundColor:"#1a223c"}}>
 
-                    <div className="kt-header__brand kt-grid__item  " id="kt_header_brand">
+                    <div className="kt-header__brand kt-grid__item  " id="kt_header_brand" style={{backgroundColor: "#1a223c"}}>
                         <div className="kt-header__brand-logo">
                             <a href="index.html">
-                                <img alt="Logo" src="/assets/gou-icons/logo-6.png" />
+                                <img alt="Logo" src="/assets/gou-imgs/logo.png" style={{width:"100%", height: "100%"}} />
                             </a>
                         </div>
                     </div>
 
-                    <h3 className="kt-header__title kt-grid__item">
+                    <h3 className="kt-header__title kt-grid__item" style={{color: "white"}}>
                         Goumath
                 </h3>
 
@@ -110,8 +138,8 @@ class NavBar extends React.Component {
                     <div className="kt-header-menu-wrapper kt-grid__item kt-grid__item--fluid" id="kt_header_menu_wrapper">
                         <div id="kt_header_menu" className="kt-header-menu kt-header-menu-mobile  kt-header-menu--layout-default ">
                             <ul className="kt-menu__nav ">
-                                <li className="kt-menu__item  kt-menu__item--active " aria-haspopup="true"><a href="/" className="kt-menu__link "><span className="kt-menu__link-text">{t('home page')}</span></a></li>
-                                <li className="kt-menu__item  kt-menu__item--submenu kt-menu__item--rel" data-ktmenu-submenu-toggle="click" aria-haspopup="true">
+                                <li className= {`kt-menu__item  ${homepage_active}`} aria-haspopup="true"><a href="/" className="kt-menu__link "><span className="kt-menu__link-text">{t('home page')}</span></a></li>
+                                <li className={`kt-menu__item  kt-menu__item--submenu kt-menu__item--rel ${sell_active}`} data-ktmenu-submenu-toggle="click" aria-haspopup="true">
                                     <a className="kt-menu__link kt-menu__toggle"><span className="kt-menu__link-text">{t('common:sell')}</span><i className="kt-menu__hor-arrow la la-angle-down"></i><i className="kt-menu__ver-arrow la la-angle-right"></i></a>
                                     <div className="kt-menu__submenu kt-menu__submenu--classic kt-menu__submenu--left">
                                         <ul className="kt-menu__subnav">
@@ -134,7 +162,7 @@ class NavBar extends React.Component {
                                         </ul>
                                     </div>
                                 </li>
-                                <li className="kt-menu__item  kt-menu__item--submenu kt-menu__item--rel" data-ktmenu-submenu-toggle="click" aria-haspopup="true">
+                                <li className={`kt-menu__item  kt-menu__item--submenu kt-menu__item--rel ${rent_active}`} data-ktmenu-submenu-toggle="click" aria-haspopup="true">
                                     <a className="kt-menu__link kt-menu__toggle"><span className="kt-menu__link-text">{t('common:rent')}</span><i className="kt-menu__hor-arrow la la-angle-down"></i><i className="kt-menu__ver-arrow la la-angle-right"></i></a>
                                     <div className="kt-menu__submenu kt-menu__submenu--classic kt-menu__submenu--left">
                                         <ul className="kt-menu__subnav">
@@ -157,7 +185,7 @@ class NavBar extends React.Component {
                                         </ul>
                                     </div>
                                 </li>
-                                <li className="kt-menu__item  kt-menu__item--submenu kt-menu__item--rel" data-ktmenu-submenu-toggle="click" aria-haspopup="true">
+                                <li className={`kt-menu__item  kt-menu__item--submenu kt-menu__item--rel ${utility_active}`} data-ktmenu-submenu-toggle="click" aria-haspopup="true">
                                     <a className="kt-menu__link kt-menu__toggle"><span className="kt-menu__link-text">{t('utility')}</span><i className="kt-menu__hor-arrow la la-angle-down"></i><i className="kt-menu__ver-arrow la la-angle-right"></i></a>
                                     <div className="kt-menu__submenu kt-menu__submenu--classic kt-menu__submenu--left">
                                         <ul className="kt-menu__subnav">
@@ -177,9 +205,9 @@ class NavBar extends React.Component {
                         <div class="kt-header__topbar-item dropdown">
                             <div class="kt-header__topbar-wrapper" data-toggle="dropdown" data-offset="30px,0px"
                                 aria-expanded="true">
-                                <span className="kt-header__topbar-icon kt-header__topbar-icon--success">
+                                <span className="kt-header__topbar-icon kt-header__topbar-icon--success gou-noti-num">
                                     <i className="flaticon2-bell-alarm-symbol"></i>
-                                    <strong>{this.state.notiCount}</strong>
+                                    <strong style={{color:"white"}}>{this.state.notiCount}</strong>
                                 </span>
                                 <span className="kt-hidden kt-badge kt-badge--danger"></span>
                             </div>
@@ -222,7 +250,7 @@ class NavBar extends React.Component {
                             </div>
                             <div className="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-anim">
                                 <ul className="kt-nav kt-margin-t-10 kt-margin-b-10">
-                                    <li className="kt-nav__item kt-nav__item--active">
+                                    <li className="kt-nav__item">
                                         <a className="kt-nav__link" href="/manage-posts/create/sell-rent">
                                             <span className="kt-nav__link-text">{t('sell')}/{t('rent')}</span>
                                         </a>
@@ -244,13 +272,13 @@ class NavBar extends React.Component {
                             </div>
                             <div className="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-anim">
                                 <ul className="kt-nav kt-margin-t-10 kt-margin-b-10">
-                                    <li className="kt-nav__item kt-nav__item--active">
+                                    <li className={`kt-nav__item ${en_active}`}>
                                         <a onClick={this.handleEngTrans} className="kt-nav__link">
                                             <span className="kt-nav__link-icon"><img src="/assets/gou-icons/260-united-kingdom.svg" alt="" /></span>
                                             <span className="kt-nav__link-text">{t('english')}</span>
                                         </a>
                                     </li>
-                                    <li className="kt-nav__item">
+                                    <li className={`kt-nav__item ${vn_active}`}>
                                         <a onClick={this.handleVNTrans} className="kt-nav__link">
                                             <span className="kt-nav__link-icon"><img src="/assets/gou-icons/220-vietnam.svg" alt="" /></span>
                                             <span className="kt-nav__link-text">{t('vietnam')}</span>
@@ -267,7 +295,7 @@ class NavBar extends React.Component {
                                     </div>
                                     <div className="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-anim">
                                         <ul className="kt-nav kt-margin-t-10 kt-margin-b-10">
-                                            <li className={`kt-nav__item kt-nav__item--active`}>
+                                            <li className={`kt-nav__item`}>
                                                 <a className="kt-nav__link" onClick={this.handleLogout}>
                                                     <span className="kt-nav__link-text">{t('sign out')}</span>
                                                 </a>

@@ -113,16 +113,17 @@ class FilterREPage extends React.Component {
             method: "GET"
         }).then(res => {
             let resData = res.data
+            console.log("data", resData)
             this.setState({ data: this.renderData(resData), pagination: { ...this.state.pagination, total: resData.totalCount, current: 1 } }, () => {console.log(this.state)})
         })
     }
     renderData = (resData) => {
         let data = []
         resData.results.forEach(post => {
-            let { title, type, area, price, list_img, _id } = post
+            let { title, type, area, price, list_img, _id, num_bathroom, num_bedroom } = post
             let listAddress = [post.house_no, post.street, post.ward, post.district, post.province]
             let address = generateAddress(listAddress)
-            data.push({ address, title, type, area, price, list_img, _id })
+            data.push({ address, title, type, area, price, list_img, _id, num_bathroom, num_bedroom })
         })
         return data
     }
@@ -207,7 +208,6 @@ class FilterREPage extends React.Component {
                                                                     <Option value="null">{t('district')}</Option>
                                                                     {districts1 && districts1.map(district => { return (<Option value={district}>{district}</Option>) })}
                                                                 </Select>
-                                                                <button className="btn gou-general-btn" onClick={this.handleFilter}>{t('search')}</button>
                                                                 <Select className="gou-toolbar-item gou-publish-status-filter-select" style={{ width: 180 }} placeholder={t('sort')} onChange={this.handleChangeSort}>
                                                                     <Option value="null">{t('sort')}</Option>
                                                                     <Option value="asc-price">{t('price')} ({t('low to high')})</Option>
@@ -216,6 +216,7 @@ class FilterREPage extends React.Component {
                                                                     <Option value="desc-area">{t('area')} ({t('large to small')})</Option>
                                                                     <Option value="newest">{t('newest')}</Option>
                                                                 </Select>
+                                                                <button className="btn btn-info" onClick={this.handleFilter}>{t('search')}</button>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -223,7 +224,7 @@ class FilterREPage extends React.Component {
                                                 <div className="row">
                                                     {
                                                         data.map(post => {
-                                                            return <SellRentIntroCard title={post.title} area={post.area} price={post.price} address={post.address} type={post.type} list_img={post.list_img} postId={post._id} />
+                                                            return <SellRentIntroCard title={post.title} area={post.area} price={post.price} address={post.address} type={post.type} list_img={post.list_img} postId={post._id} num_bathroom={post.num_bathroom} num_bedroom={post.num_bedroom} />
                                                         })
                                                     }
                                                 </div>

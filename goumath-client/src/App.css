@@ -53,8 +53,31 @@
   margin-bottom: 2rem;
 }
 
-.gou-general-btn{
-  color: white;
-  background-color: #22b9ff;
-  height: 38px;
+.gou-intro-card-icon{
+  color: #1a223c
+}
+.flaticon-edit{
+  color: #1a223c
+}
+.ant-pagination-item-active {
+  border-color: #1a223c !important;
+}
+.ant-pagination-item:hover {
+  border-color: #1a223c !important;
+}
+.ant-pagination-item-active a{
+  color: #1a223c !important;
+}
+.ant-pagination-item a:hover{
+  color: #1a223c !important;
+}
+.ant-pagination-prev:focus .ant-pagination-item-link, .ant-pagination-next:focus .ant-pagination-item-link, .ant-pagination-prev:hover .ant-pagination-item-link, .ant-pagination-next:hover .ant-pagination-item-link{
+  color: #1a223c !important;
+  border-color: #1a223c !important;
+}
+button.ant-btn.gou-toolbar-item{
+  height: 38px
+}
+.gou-noti-num:hover{
+  color: black
 }

@@ -1,48 +1,48 @@
-.gou-card-img{
-    width: 100%;
-    height: 100%;
+.gou-card-img {
+  width: 100%;
+  height: 100%;
 }
-.gou-card-head{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.gou-card-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
-.gou-card-title{
-    text-align: center;
-    font-size: 1.4rem;
-    color: #48465b;
-    font-weight: 500;
+.gou-card-title {
+  text-align: center;
+  font-size: 1.4rem;
+  color: #48465b;
+  font-weight: 500;
 }
-.gou-footer{
-    margin-top: 0rem;
+.gou-footer {
+  margin-top: 0rem;
 }
-.gou-footer button{
-    width: 100%
+.gou-footer button {
+  width: 100%;
 }
-.gou-card-list-title{
-    text-align: center;
-    font-size: 1.4rem;
-    color: #48465b;
-    font-weight: 500; 
-}
-
-.gou-filter-container{
-    margin-top: 10px;
+.gou-card-list-title {
+  text-align: center;
+  font-size: 1.4rem;
+  color: #48465b;
+  font-weight: 500;
 }
 
-.gou-filter-btn{
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.gou-filter-container {
+  margin-top: 10px;
+}
+
+.gou-filter-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 @media (max-width: 1025px) {
-    .gou-filter-item{
-        margin-top:10px;
-    }
-    .gou-filter-container{
-        margin-top: 0px;
-    }
-    .gou-filter-btn{
-        margin-top: 10px
-    }
+  .gou-filter-item {
+    margin-top: 10px;
+  }
+  .gou-filter-container {
+    margin-top: 0px;
+  }
+  .gou-filter-btn {
+    margin-top: 10px;
+  }
 }

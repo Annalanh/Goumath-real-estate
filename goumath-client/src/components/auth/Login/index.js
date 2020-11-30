@@ -21,7 +21,7 @@ class LoginPage extends React.Component {
 		e.preventDefault()
 		axios.post('http://localhost:8081/auth/login', { username, password })
 			.then(res => {
-				console.log(res)
+				console.log("res", res)
 				let resData = res.data
 				if (resData.status) {
 					login(resData.token)

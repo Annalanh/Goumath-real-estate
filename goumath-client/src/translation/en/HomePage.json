@@ -1,3 +1,14 @@
 {
-    "Post for you": "Post for you"
+    "Post for you": "Post for you",
+    "Features intro": "We provide you with all necessary features to perform any real estate transations",
+    "find house": "Find houses",
+    "manage posts": "Manage posts",
+    "calculation tools": "Calculation tools",
+    "price prediction": "Price prediction",
+    "find houses description": "Search homes in every province in Vietnam. Support searching by location, price, area, type of house, ...",
+    "manage posts description": "Postings for sale, rent, purchase, hire and update or delete these posts under the moderation of the site administrator. In addition, you can save the posts you are interested in and view the market price.",
+    "calculation tools description": "Support for calculating loan based on principal, bank interest and loan term correctly.",
+    "price prediction description": "Predict house prices based on location, number of floors, number of bedrooms and number of bathrooms.",
+    "recent houses for sale": "Recent houses for sale",
+    "recent houses for rent": "Recent houses for rent"
 }

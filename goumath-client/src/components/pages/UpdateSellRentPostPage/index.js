@@ -1,5 +1,6 @@
 import React from 'react';
 import axios from 'axios';
+import socketIOClient from "socket.io-client";
 import mapboxgl from 'mapbox-gl';
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
@@ -102,7 +103,7 @@ class UpdateSellRentPostPage extends React.Component {
           lon: postInfo.lon,
           transaction_status: postInfo.transaction_status,
           publish_status: postInfo.publish_status,
-          initial_publish_status:postInfo.publish_status,
+          initial_publish_status: postInfo.publish_status,
           province: postInfo.province,
           district: postInfo.district,
           ward: postInfo.ward,
@@ -220,31 +221,32 @@ class UpdateSellRentPostPage extends React.Component {
   }
 
   handleChangeProvince = (e) => {
-    this.setState({ province: e.target.value})
+    this.setState({ province: e.target.value })
   }
 
   handleChangeDistrict = (e) => {
-    this.setState({ district: e.target.value})
+    this.setState({ district: e.target.value })
   }
 
   handleChangeWard = (e) => {
-    this.setState({ ward: e.target.value})
+    this.setState({ ward: e.target.value })
   }
 
   handleChangeStreet = (e) => {
-    this.setState({ street: e.target.value})
+    this.setState({ street: e.target.value })
   }
 
   handleChangeHouseNo = (e) => {
-    this.setState({ house_no: e.target.value})
+    this.setState({ house_no: e.target.value })
   }
 
   handleSendNoti = ({ authorId, postId, type, content }) => {
-    this.context.emit('noti:send', { authorId, postId, type, content});
+    const socket = socketIOClient("http://localhost:8080/")
+    socket.emit('noti:send', { authorId, postId, type, content });
   }
-  handleChangePriceUnit = (value) => { 
-    if(value === "deal") this.setState({ disabled: true }) 
-    else this.setState({ disabled: false}) 
+  handleChangePriceUnit = (value) => {
+    if (value === "deal") this.setState({ disabled: true })
+    else this.setState({ disabled: false })
   }
 
   render() {
@@ -258,7 +260,7 @@ class UpdateSellRentPostPage extends React.Component {
       previewImage,
       fileList,
       previewTitle,
-      authorId, 
+      authorId,
       lat,
       lon,
       transaction_status,
@@ -419,7 +421,7 @@ class UpdateSellRentPostPage extends React.Component {
                                       swal(t("common:success"), t(resData.message), "success")
                                         .then(value => {
                                           if (value) {
-                                            if(initial_publish_status != publish_status){
+                                            if (initial_publish_status != publish_status) {
                                               const content = createContent({ title, publish_status })
                                               axios({
                                                 url: "http://localhost:8081/notification/create",
@@ -427,7 +429,7 @@ class UpdateSellRentPostPage extends React.Component {
                                                 data: { userId: authorId, postId, content, postType: 'sell-rent' }
                                               }).then(res => {
                                                 let resData = res.data
-                                                if(resData.status) this.handleSendNoti({ authorId, postId, type: "sell-rent", content })
+                                                if (resData.status) this.handleSendNoti({ authorId, postId, type: "sell-rent", content })
                                                 //window.location.href = "/manage-posts"
                                               })
                                             }
@@ -696,7 +698,7 @@ class UpdateSellRentPostPage extends React.Component {
                                           <div className="form-group row">
                                             <label className="col-lg-3 col-form-label">{t('common:price unit')}:</label>
                                             <div className="col-lg-6">
-                                              <Select className="gou-antd-select" value={props.values.price_unit} onChange={(value) => { props.setFieldValue('price_unit', value);if(value === "deal") { props.setFieldValue('price', 0)};this.handleChangePriceUnit(value) }} name="price_unit">
+                                              <Select className="gou-antd-select" value={props.values.price_unit} onChange={(value) => { props.setFieldValue('price_unit', value); if (value === "deal") { props.setFieldValue('price', 0) }; this.handleChangePriceUnit(value) }} name="price_unit">
                                                 <Option value="vnd">VND</Option>
                                                 <Option value="million/m2">{t('common:million')}/m2</Option>
                                                 <Option value="deal">{t('common:deal')}</Option>
@@ -848,14 +850,9 @@ class UpdateSellRentPostPage extends React.Component {
                                         </div>
                                       </div>
                                     </div>
-                                    <div className="kt-portlet__foot">
+                                    <div className="kt-portlet__foot" style={{display: "flex", justifyContent: "center"}}>
                                       <div className="kt-form__actions">
-                                        <div className="row">
-                                          <div className="col-lg-3"></div>
-                                          <div className="col-lg-6">
-                                            <button type="submit" className="btn btn-info">{t('update post')}</button>
-                                          </div>
-                                        </div>
+                                        <button type="submit" className="btn btn-info">{t('update post')}</button>
                                       </div>
                                     </div>
                                   </form>

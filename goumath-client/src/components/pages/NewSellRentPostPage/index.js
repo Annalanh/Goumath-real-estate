@@ -66,25 +66,15 @@ class NewSellRentPostPage extends React.Component {
         this.marker.remove()
         this.marker = new mapboxgl.Marker().setLngLat([Number(lon), Number(lat)]).addTo(this.map);
         axios({
-          url: `https://apis.wemap.asia/geocode-1/reverse?point.lat=${lat}&point.lon=${lon}&key=vpstPRxkBBTLaZkOaCfAHlqXtCR`,
+          url: `https://apis.wemap.asia/we-tools/pip/${lon}/${lat}?key=vpstPRxkBBTLaZkOaCfAHlqXtCR`,
           method: 'GET'
         }).then(res => {
           let resData = res.data
-          let poiData = resData.features[0].properties
-          if (poiData) {
-            let { name, street, region, county, locality } = poiData
-            if(street) {
-              street = street.replace('Phố', '')
-              street = street.replace('Đường', '')
-            }
-            this.setState({
-              province: region || '',
-              district: county || '',
-              ward: locality || '',
-              street: street || '',
-              house_no: name || '',
-            })
-          }
+          this.setState({
+            province: resData.region[0].name || '',
+            district: resData.county[0].name || '',
+            ward: resData.locality[0].name || ''
+          })
         })
       })
     })
@@ -134,28 +124,28 @@ class NewSellRentPostPage extends React.Component {
   }
 
   handleChangeProvince = (e) => {
-    this.setState({ province: e.target.value})
+    this.setState({ province: e.target.value })
   }
 
   handleChangeDistrict = (e) => {
-    this.setState({ district: e.target.value})
+    this.setState({ district: e.target.value })
   }
 
   handleChangeWard = (e) => {
-    this.setState({ ward: e.target.value})
+    this.setState({ ward: e.target.value })
   }
 
   handleChangeStreet = (e) => {
-    this.setState({ street: e.target.value})
+    this.setState({ street: e.target.value })
   }
 
   handleChangeHouseNo = (e) => {
-    this.setState({ house_no: e.target.value})
+    this.setState({ house_no: e.target.value })
   }
 
-  handleChangePriceUnit = (value) => { 
-    if(value === "deal") this.setState({ disabled: true }) 
-    else this.setState({ disabled: false}) 
+  handleChangePriceUnit = (value) => {
+    if (value === "deal") this.setState({ disabled: true })
+    else this.setState({ disabled: false })
   }
 
   render() {
@@ -173,7 +163,7 @@ class NewSellRentPostPage extends React.Component {
       district,
       ward,
       street,
-      house_no, 
+      house_no,
       disabled
     } = this.state;
     let initialProfile = {
@@ -258,7 +248,7 @@ class NewSellRentPostPage extends React.Component {
                             actions.setSubmitting(false);
 
                             let formData = new FormData()
-                            
+
                             fileList.forEach(file => {
                               formData.append('uploadedFiles', file.originFileObj)
                             })
@@ -559,7 +549,7 @@ class NewSellRentPostPage extends React.Component {
                                     <div className="form-group row">
                                       <label className="col-lg-3 col-form-label">{t('common:price unit')}:</label>
                                       <div className="col-lg-6">
-                                        <Select className='gou-antd-select' value={props.values.price_unit} onChange={(value) => { props.setFieldValue('price_unit', value); if(value === "deal") { props.setFieldValue('price', 0)};this.handleChangePriceUnit(value)}} name="price_unit">
+                                        <Select className='gou-antd-select' value={props.values.price_unit} onChange={(value) => { props.setFieldValue('price_unit', value); if (value === "deal") { props.setFieldValue('price', 0) }; this.handleChangePriceUnit(value) }} name="price_unit">
                                           <Option value="vnd">VND</Option>
                                           <Option value="million/m2">{t('common:million')}/m2</Option>
                                           <Option value="deal">{t('common:deal')}</Option>
@@ -711,14 +701,9 @@ class NewSellRentPostPage extends React.Component {
                                   </div>
                                 </div>
                               </div>
-                              <div className="kt-portlet__foot">
+                              <div className="kt-portlet__foot" style={{display: "flex", justifyContent: "center"}}>
                                 <div className="kt-form__actions">
-                                  <div className="row">
-                                    <div className="col-lg-3"></div>
-                                    <div className="col-lg-6">
-                                      <button type="submit" className="btn btn-info">{t('common:create new')}</button>
-                                    </div>
-                                  </div>
+                                  <button type="submit" className="btn btn-info">{t('common:create new')}</button>
                                 </div>
                               </div>
                             </form>

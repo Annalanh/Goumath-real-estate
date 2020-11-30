@@ -1,0 +1,33 @@
+.gou-footer-section{
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    padding: 10px 0px;
+}
+.gou-footer-key-val{
+    display: flex;
+}
+.gou-footer-section-title{
+    font-size: 17px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 5px;
+}
+.gou-footer-key{
+    margin-right: 5px;
+    font-weight: bold;
+}
+[class^="flaticon-facebook-logo-button"]:before, [class*="flaticon-facebook-logo-button"]:before, [class^="flaticon-facebook-logo-button"]:after, [class*="flaticon-facebook-logo-button"]:after,
+[class^="flaticon-twitter-logo-button"]:before, [class*="flaticon-twitter-logo-button"]:before, [class^="flaticon-twitter-logo-button"]:after, [class*="flaticon-twitter-logo-button"]:after,
+[class^="flaticon-instagram-logo"]:before, [class*="flaticon-instagram-logo"]:before, [class^="flaticon-instagram-logo"]:after, [class*="flaticon-instagram-logo"]:after,
+[class^="flaticon-linkedin"]:before, [class*="flaticon-linkedin"]:before, [class^="flaticon-linkedin"]:after, [class*="flaticon-linkedin"]:after
+{
+    font-size: 30px;
+}
+.gou-footer{
+    background-image: url(/assets/gou-imgs/footer-banner.jpg);
+    color: white;
+    background-size: 100% 200%;
+    background-repeat: no-repeat;
+    opacity: 0.9;
+}

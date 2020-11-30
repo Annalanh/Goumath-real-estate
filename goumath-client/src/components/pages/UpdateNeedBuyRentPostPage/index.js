@@ -139,7 +139,7 @@ class UpdateNeedBuyRentPostPage extends React.Component {
             this.map.removeSource('circle-fill')
             this.map.removeLayer('circle-outline')
             this.map.removeSource('circle-outline')
-            this.drawCircle({ lat, lon, radius})
+            this.drawCircle({ lat, lon, radius })
             this.setState({
                 lat,
                 lon,
@@ -176,38 +176,38 @@ class UpdateNeedBuyRentPostPage extends React.Component {
     drawCircle = ({ lat, lon, radius }) => {
         let center = turf.point([Number(lon), Number(lat)]);
         let options = {
-          steps: 80,
-          units: 'kilometers'
+            steps: 80,
+            units: 'kilometers'
         };
-    
+
         let circle = turf.circle(center, radius, options);
         this.map.addLayer({
-          "id": "circle-fill",
-          "type": "fill",
-          "source": {
-            "type": "geojson",
-            "data": circle
-          },
-          "paint": {
-            "fill-color": "#c4e8f2",
-            "fill-opacity": 0.5
-          }
+            "id": "circle-fill",
+            "type": "fill",
+            "source": {
+                "type": "geojson",
+                "data": circle
+            },
+            "paint": {
+                "fill-color": "#c4e8f2",
+                "fill-opacity": 0.5
+            }
         });
         this.map.addLayer({
-          "id": "circle-outline",
-          "type": "line",
-          "source": {
-            "type": "geojson",
-            "data": circle
-          },
-          "paint": {
-            "line-color": "#1890ff",
-            "line-opacity": 0.5,
-            "line-width": 10,
-            "line-offset": 5
-          }
+            "id": "circle-outline",
+            "type": "line",
+            "source": {
+                "type": "geojson",
+                "data": circle
+            },
+            "paint": {
+                "line-color": "#1890ff",
+                "line-opacity": 0.5,
+                "line-width": 10,
+                "line-offset": 5
+            }
         });
-      }
+    }
 
     handleChangePublishStatus = (value) => {
         this.setState({ publish_status: value })
@@ -632,14 +632,9 @@ class UpdateNeedBuyRentPostPage extends React.Component {
                                                                                 </div>
                                                                             </div>
                                                                         </div>
-                                                                        <div className="kt-portlet__foot">
+                                                                        <div className="kt-portlet__foot" style={{display: "flex", justifyContent: "center"}}>
                                                                             <div className="kt-form__actions">
-                                                                                <div className="row">
-                                                                                    <div className="col-lg-3"></div>
-                                                                                    <div className="col-lg-6">
-                                                                                        <button type="submit" className="btn btn-info">{t('update post')}</button>
-                                                                                    </div>
-                                                                                </div>
+                                                                                <button type="submit" className="btn btn-info">{t('update post')}</button>
                                                                             </div>
                                                                         </div>
                                                                     </form>

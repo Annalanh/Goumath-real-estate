@@ -73,7 +73,7 @@ class NewNeedBuyRentPostPage extends React.Component {
       this.map.removeSource('circle-fill')
       this.map.removeLayer('circle-outline')
       this.map.removeSource('circle-outline')
-      this.drawCircle({ lat, lon, radius})
+      this.drawCircle({ lat, lon, radius })
       this.setState({
         lat,
         lon
@@ -549,14 +549,9 @@ class NewNeedBuyRentPostPage extends React.Component {
                                   </div>
                                 </div>
                               </div>
-                              <div className="kt-portlet__foot">
+                              <div className="kt-portlet__foot" style={{display: "flex", justifyContent: "center"}}>
                                 <div className="kt-form__actions">
-                                  <div className="row">
-                                    <div className="col-lg-3"></div>
-                                    <div className="col-lg-6">
-                                      <button type="submit" className="btn btn-info">{t('common:create new')}</button>
-                                    </div>
-                                  </div>
+                                  <button type="submit" className="btn btn-info">{t('common:create new')}</button>
                                 </div>
                               </div>
                             </form>

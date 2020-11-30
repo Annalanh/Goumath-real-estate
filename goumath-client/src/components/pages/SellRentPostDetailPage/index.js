@@ -121,6 +121,7 @@ class SellRentPostDetail extends React.Component {
             data: { lat, lon, checkedTypes, radius }
           }).then(res => {
             let resData = res.data
+            console.log('utilites',resData)
             let utilityCounts = {'hospital': 0, 'university': 0,  'medical_supply': 0,  'pharmacy': 0, 'veterinary': 0, 'kindergarten': 0, 'school': 0, 'college': 0, 'language_school': 0, 'music_school': 0, 'mall': 0, 'supermarket': 0 }
             resData.forEach(utility => {
               utilityCounts[utility.type] = utility.point.length

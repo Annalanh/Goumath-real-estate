@@ -4,17 +4,13 @@
     display: flex;
     flex-wrap: wrap
 }
-
-.gou-toolbar-item{
-    margin: 0px 5px
-}
 .gou-new-post-btn{
     margin-left: auto;
-    background-color: #22b9ff;
+    background-color: #1a223c;
     color: white
 }
 
-@media only screen and (max-width: 767px){
+@media only screen and (max-width: 400px){
     .gou-publish-status-filter-select{
         margin-top: 10px;
     }
@@ -23,7 +19,7 @@
     }
     .gou-new-post-btn{
         margin: 10px 0px 0px 5px;
-        background-color: #22b9ff;
+        background-color: #1a223c;
         color: white
     }
 }
