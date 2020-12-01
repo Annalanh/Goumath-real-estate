@@ -17,6 +17,8 @@ const utilities = [
     { type: 'cafe', k: 'amenity', v: 'cafe' },
     { type: 'marketplace', k: 'amenity', v: 'marketplace' },
     { type: 'parking', k: 'amenity', v: 'parking' },
+    { type: 'bus_station', k: 'amenity', v: 'bus_station' },
+    { type: 'police', k: 'amenity', v: 'police' },
 ];
 function getUtility(type) {
     return utilities.filter(utility => utility.type == type)[0]
@@ -56,7 +58,7 @@ class UtilityController {
     }
     getAllUtilitiesPredict(req, res) {
         let { lat, lon, radius } = req.query
-        let checkedTypes = ['bank', 'cafe', 'college', 'hospital', 'marketplace', 'parking', 'school', 'university']
+        let checkedTypes = ["hospital", "university", "medical_supply", "pharmacy", "school", "college", "cafe", "bus_station", "police", "bank", "marketplace"]
         let arr = []
         checkedTypes.forEach((val) => {
             arr.push(getOne(getUtility(val), lat, lon, Number(radius)))

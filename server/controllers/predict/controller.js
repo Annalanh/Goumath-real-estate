@@ -375,10 +375,13 @@ class PredictController {
         const { region, county } = await geoCoding({ lat, lon });
         const point = calcPoint({ region, county });
         const utilityCounts = await countUtilites({ lat, lon })
-        const childProcess = spawn('python3', ['./training-code/predict-price.py', area, num_bedroom, num_bathroom, utilityCounts.bank, utilityCounts.cafe, utilityCounts.college, utilityCounts.hospital, utilityCounts.marketplace, utilityCounts.parking, utilityCounts.school, utilityCounts.university, point])
+        console.log(utilityCounts)
+        // const childProcess = spawn('python3', ['./training-code/predict-price.py', area, num_bedroom, num_bathroom, utilityCounts.bank, utilityCounts.cafe, utilityCounts.college, utilityCounts.hospital, utilityCounts.marketplace, utilityCounts.parking, utilityCounts.school, utilityCounts.university, point])
+        const childProcess = spawn('python3', ['./training-code/predict-price.py', area, num_bedroom, num_bathroom, utilityCounts.hospital, utilityCounts.university, utilityCounts.medical_supply, utilityCounts.pharmacy, utilityCounts.school, utilityCounts.college,  utilityCounts.cafe, utilityCounts.bus_station, utilityCounts.police, utilityCounts.bank, utilityCounts.marketplace])
         let predictedPrice;
         childProcess.stdout.on('data', (data) => {
             predictedPrice = data.toString()
+            console.log('stderr:' + data.toString())
         })
         childProcess.stderr.on('data', function (data) {
             console.log('stderr:' + data)
