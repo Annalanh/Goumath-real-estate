@@ -19,11 +19,14 @@ class NeedBuyRentIntroCard extends React.Component {
             <div className="col-md-4" style={{ padding: "0px 10px" }}>
                 <div className="gou-intro-card" onClick={this.handleClickOnCard}>
                     <div className="gou-intro-card-type gou-intro-card-item">
-                        {type} - {title}: <span className="gou-intro-card-price">{price}:</span>
+                        {type} - {title}
+                    </div>
+                    <div className="gou-intro-card-type gou-intro-card-item">
+                        {price} {type == "need buy"?"VND":t("million/m2")}
                     </div>
                     <div className="gou-intro-card-location gou-intro-card-item">
-                        <span><i class="fa fa-dollar-sign"></i></span>
-                        <span style={{ padding: "0px 6px" }}>{t('common:location')}: ({lat},{lon}), R: {radius} km</span>
+                        <span><i class="fa fa-location-arrow"></i></span>
+                        <span style={{ padding: "0px 6px" }}>{t('common:location')}: {lat},{lon}</span>
                     </div>
                     <div className="gou-intro-card-info-container gou-intro-card-item">
                         <div>

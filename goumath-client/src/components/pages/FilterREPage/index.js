@@ -8,6 +8,7 @@ import AsideBar from '../../layouts/AsideBar'
 import Footer from '../../layouts/Footer'
 import { withTranslation } from 'react-i18next';
 import SellRentIntroCard from '../../layouts/SellRentIntroCard'
+import NeedBuyRentIntroCard from '../../layouts/NeedBuyRentIntroCard'
 import { provinces, districts } from '../../../utils/geoData'
 import { generateAddress } from '../../../utils/address'
 
@@ -21,7 +22,7 @@ class FilterREPage extends React.Component {
             loading: true,
             pagination: {
                 current: 1,
-                pageSize: 1,
+                pageSize: 10,
                 total: 3
             },
             sort: null,
@@ -46,7 +47,7 @@ class FilterREPage extends React.Component {
         this.setState({ loading: false, type, category, priceRange, areaRange, province, district, districts1: districts[province] }, () => {
             let { pagination, sort } = this.state
             axios({
-                url: `http://localhost:8081/post/all-posts?current=${pagination.current}&pageSize=${pagination.pageSize}&type=${type}&category=${category}&priceRange=${priceRange}&areaRange=${areaRange}&province=${province}&district=${district}&sort=${sort}`,
+                url: `http://localhost:8081/post/all-posts?current=${pagination.current}&pageSize=${pagination.pageSize}&type=${type}&category=${category}&priceRange=${priceRange}&areaRange=${areaRange}&province=${province}&district=${district}&sort=${sort}&role=null`,
                 method: "GET"
             }).then(res => {
                 let resData = res.data
@@ -83,7 +84,7 @@ class FilterREPage extends React.Component {
         if (value) {
             let { type, category, priceRange, areaRange, province, district, pagination } = this.state
             axios({
-                url: `http://localhost:8081/post/all-posts?current=${pagination.current}&pageSize=${pagination.pageSize}&type=${type}&category=${category}&priceRange=${priceRange}&areaRange=${areaRange}&province=${province}&district=${district}&sort=${value}`,
+                url: `http://localhost:8081/post/all-posts?current=${pagination.current}&pageSize=${pagination.pageSize}&type=${type}&category=${category}&priceRange=${priceRange}&areaRange=${areaRange}&province=${province}&district=${district}&sort=${value}&role=null`,
                 method: "GET"
             }).then(res => {
                 let resData = res.data
@@ -99,7 +100,7 @@ class FilterREPage extends React.Component {
 
         let { type, category, priceRange, areaRange, province, district, sort } = this.state
         axios({
-            url: `http://localhost:8081/post/all-posts?current=${pagination.current}&pageSize=${pagination.pageSize}&type=${type}&category=${category}&priceRange=${priceRange}&areaRange=${areaRange}&province=${province}&district=${district}&sort=${sort}`,
+            url: `http://localhost:8081/post/all-posts?current=${pagination.current}&pageSize=${pagination.pageSize}&type=${type}&category=${category}&priceRange=${priceRange}&areaRange=${areaRange}&province=${province}&district=${district}&sort=${sort}&role=null`,
             method: "GET"
         }).then(res => {
             let resData = res.data
@@ -109,21 +110,27 @@ class FilterREPage extends React.Component {
     handleFilter = () => {
         let { type, category, priceRange, areaRange, province, district, pagination, sort } = this.state
         axios({
-            url: `http://localhost:8081/post/all-posts?current=1&pageSize=${pagination.pageSize}&type=${type}&category=${category}&priceRange=${priceRange}&areaRange=${areaRange}&province=${province}&district=${district}&sort=${sort}`,
+            url: `http://localhost:8081/post/all-posts?current=1&pageSize=${pagination.pageSize}&type=${type}&category=${category}&priceRange=${priceRange}&areaRange=${areaRange}&province=${province}&district=${district}&sort=${sort}&role=null`,
             method: "GET"
         }).then(res => {
             let resData = res.data
             console.log("data", resData)
-            this.setState({ data: this.renderData(resData), pagination: { ...this.state.pagination, total: resData.totalCount, current: 1 } }, () => {console.log(this.state)})
+            this.setState({ data: this.renderData(resData), pagination: { ...this.state.pagination, total: resData.totalCount, current: 1 } }, () => { console.log(this.state) })
         })
     }
     renderData = (resData) => {
         let data = []
         resData.results.forEach(post => {
-            let { title, type, area, price, list_img, _id, num_bathroom, num_bedroom } = post
-            let listAddress = [post.house_no, post.street, post.ward, post.district, post.province]
-            let address = generateAddress(listAddress)
-            data.push({ address, title, type, area, price, list_img, _id, num_bathroom, num_bedroom })
+            if (post.type == "sell" || post.type == "rent") {
+                let { title, type, area, price, list_img, _id, num_bathroom, num_bedroom } = post
+                let listAddress = [post.house_no, post.street, post.ward, post.district, post.province]
+                let address = generateAddress(listAddress)
+                data.push({ address, title, type, area, price, list_img, _id, num_bathroom, num_bedroom })
+            } else {
+                let { _id, type, title, price, lat, lon, radius, area, num_floor, num_bathroom, num_bedroom, direction, createdAt } = post
+                data.push({ _id, type, title, price, lat, lon, radius, area, num_floor, num_bathroom, num_bedroom, direction, createdAt })
+            }
+
         })
         return data
     }
@@ -155,6 +162,8 @@ class FilterREPage extends React.Component {
                                                                     <Option value="null">{t('post type')}</Option>
                                                                     <Option value="sell">{t('sell')}</Option>
                                                                     <Option value="rent">{t('rent')}</Option>
+                                                                    <Option value="need buy">{t('need buy')}</Option>
+                                                                    <Option value="need rent">{t('need rent')}</Option>
                                                                 </Select>
                                                                 <Select className="gou-toolbar-item gou-publish-status-filter-select" style={{ width: 200 }} placeholder={t('category')} onChange={this.handleChangeCategory} defaultValue={category}>
                                                                     <Option value="null">{t('category')}</Option>
@@ -216,7 +225,7 @@ class FilterREPage extends React.Component {
                                                                     <Option value="desc-area">{t('area')} ({t('large to small')})</Option>
                                                                     <Option value="newest">{t('newest')}</Option>
                                                                 </Select>
-                                                                <button className="btn btn-info" onClick={this.handleFilter}>{t('search')}</button>
+                                                                <button className="btn gou-save-btn" onClick={this.handleFilter}>{t('search')}</button>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -224,7 +233,25 @@ class FilterREPage extends React.Component {
                                                 <div className="row">
                                                     {
                                                         data.map(post => {
-                                                            return <SellRentIntroCard title={post.title} area={post.area} price={post.price} address={post.address} type={post.type} list_img={post.list_img} postId={post._id} num_bathroom={post.num_bathroom} num_bedroom={post.num_bedroom} />
+                                                            if (post.type == "sell" || post.type == "rent") {
+                                                                return <SellRentIntroCard title={post.title} area={post.area} price={post.price} address={post.address} type={post.type} list_img={post.list_img} postId={post._id} num_bathroom={post.num_bathroom} num_bedroom={post.num_bedroom} />
+                                                            } else {
+                                                                return <NeedBuyRentIntroCard
+                                                                    postId={post._id}
+                                                                    type={post.type}
+                                                                    title={post.title}
+                                                                    price={post.price}
+                                                                    lat={post.lat}
+                                                                    lon={post.lon}
+                                                                    radius={post.radius}
+                                                                    area={post.area}
+                                                                    num_floor={post.num_floor}
+                                                                    num_bathroom={post.num_bathroom}
+                                                                    num_bedroom={post.num_bedroom}
+                                                                    createdAt={post.createdAt.split("T")[0]}
+                                                                    direction={post.direction}
+                                                                />
+                                                            }
                                                         })
                                                     }
                                                 </div>

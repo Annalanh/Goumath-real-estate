@@ -344,7 +344,7 @@ class UpdateSellRentPostPage extends React.Component {
                               <div className="kt-portlet__head">
                                 <div className="kt-portlet__head-label">
                                   <h3 className="kt-portlet__head-title">
-                                    {t("update post")}
+                                    {t("updatePostPage:update post")}
                                   </h3>
                                 </div>
                                 <div className="gou-status-container">
@@ -852,7 +852,7 @@ class UpdateSellRentPostPage extends React.Component {
                                     </div>
                                     <div className="kt-portlet__foot" style={{display: "flex", justifyContent: "center"}}>
                                       <div className="kt-form__actions">
-                                        <button type="submit" className="btn btn-info">{t('update post')}</button>
+                                        <button type="submit" className="btn btn-info">{t('updatePostPage:update post')}</button>
                                       </div>
                                     </div>
                                   </form>

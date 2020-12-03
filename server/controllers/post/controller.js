@@ -1,5 +1,5 @@
 const formidable = require('formidable');
-const sgMail = require('@sendgrid/mail');
+const nodemailer = require("nodemailer");
 const dotenv = require('dotenv').config()
 const Post = require('../../models/post')
 const User = require('../../models/user')
@@ -42,26 +42,26 @@ function filterOne({ province, district, category, type, month }) {
         })
     })
 }
-function calcPriceInNumber({ price, area, price_unit}){
-    if(price_unit == "million/m2"){
-        return Number(area)*Number(price)*1000000;
-    }else if(price_unit == "deal"){
+function calcPriceInNumber({ price, area, price_unit }) {
+    if (price_unit == "million/m2") {
+        return Number(area) * Number(price) * 1000000;
+    } else if (price_unit == "deal") {
         return 0;
-    }else{
+    } else {
         return Number(price);
     }
 }
 class PostController {
-    getSellPostsForHomepage(req, res){
-        Post.find({ type: "sell"}).limit(8).sort({ createdAt: -1 }).exec((err, data) => {
-            if(err) res.send({ status: false, err })
+    getSellPostsForHomepage(req, res) {
+        Post.find({ type: "sell", publish_status: "approved" }).limit(8).sort({ createdAt: -1 }).exec((err, data) => {
+            if (err) res.send({ status: false, err })
             else res.send({ status: true, recentSellPosts: data })
         })
     }
 
-    getRentPostsForHomepage(req, res){
-        Post.find({ type: "rent"}).limit(8).sort({ createdAt: -1 }).exec((err, data) => {
-            if(err) res.send({ status: false, err })
+    getRentPostsForHomepage(req, res) {
+        Post.find({ type: "rent", publish_status: "approved" }).limit(8).sort({ createdAt: -1 }).exec((err, data) => {
+            if (err) res.send({ status: false, err })
             else res.send({ status: true, recentRentPosts: data })
         })
     }
@@ -92,10 +92,13 @@ class PostController {
     getAllPosts(req, res) {
         let current = Number(req.query.current)
         let pageSize = Number(req.query.pageSize)
-        let { type, category, priceRange, areaRange, province, district, sort, publish_status } = req.query
+        let { type, category, priceRange, areaRange, province, district, sort, publish_status, role } = req.query
         let filterInfo = {}
         let sortInfo = {}
 
+        if (role == 'null' || role == undefined) {
+            filterInfo.publish_status = "approved"
+        }
         if (type != 'null' && type != undefined) { filterInfo.type = type }
         if (category != 'null' && category != undefined) { filterInfo.category = category }
         if (priceRange != 'null' && priceRange != undefined) {
@@ -103,12 +106,12 @@ class PostController {
                 filterInfo.price_in_number = 0
             } else if (priceRange == 'lt500') {
                 filterInfo.price_in_number = { $lte: 500000000, $gt: 0 }
-            } else if (priceRange == 'gt20000'){
+            } else if (priceRange == 'gt20000') {
                 filterInfo.price_in_number = { $gte: 20000000000 }
             } else {
                 let priceRanges = priceRange.split("to")
-                let minPrice = Number(priceRanges[0])*1000000
-                let maxPrice = Number(priceRanges[1])*1000000
+                let minPrice = Number(priceRanges[0]) * 1000000
+                let maxPrice = Number(priceRanges[1]) * 1000000
                 filterInfo.price_in_number = { $gte: minPrice, $lte: maxPrice }
             }
         }
@@ -258,22 +261,35 @@ class PostController {
                         User.find({ is_register: true, register_province: province, register_district: district })
                             .select('email')
                             .then(users => {
-                                let emails = []
-                                users.forEach(user => emails.push(user.email))
-                                sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-
-                                const msg = {
-                                    to: emails,
-                                    from: 'thaonp041099@gmail.com',
-                                    subject: 'New post for you - Bài đăng mới dành cho bạn',
-                                    text: 'click to see the new post',
-                                    html: `<a href="http://localhost:3000/sell-rent-post/detail/${postId}">click to see the new post</a>`,
-                                };
-                                sgMail
-                                    .sendMultiple(msg)
-                                    .then(() => { }, error => {
-                                        console.error(error);
+                                let emails = ""
+                                for (let i = 0; i < users.length; i++) {
+                                    emails += users[i].email;
+                                    if (i < users.length - 1) {
+                                        emails += ", "
+                                    }
+                                }
+                                async function main() {
+                                    let testAccount = await nodemailer.createTestAccount();
+                                    let transporter = nodemailer.createTransport({
+                                        service: "Gmail",
+                                        auth: {
+                                            user: "thaonp041099@gmail.com",
+                                            pass: "Annalanh99"
+                                        }
                                     });
+
+                                    let info = await transporter.sendMail({
+                                        from: 'thaonp041099@gmail.com', // sender address
+                                        to: emails, // list of receivers
+                                        subject: "There is new real estate that you may be interested in! ✔", // Subject line
+                                        text: `New real estate in ${district}, ${province} is posted`, // plain text body
+                                        html: `<a href="http://localhost:3000/sell-rent-post/detail/${postId}">click to see the new post</a>`
+                                    });
+                                    console.log("Message sent: %s", info.messageId);
+                                    console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+                                }
+
+                                main().catch(console.error);
                             })
                     })
                 } else {

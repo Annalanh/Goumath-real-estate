@@ -291,7 +291,9 @@ class NavBar extends React.Component {
                             isLogin() ? (
                                 <div className="kt-header__topbar-item kt-header__topbar-item--user">
                                     <div className="kt-header__topbar-wrapper" data-toggle="dropdown" data-offset="10px,0px">
-                                        <span className="kt-header__topbar-icon"><i className="flaticon2-user-outline-symbol"></i></span>
+                                        <span className="kt-header__topbar-icon">
+                                            <img src="/assets/uploads/default-avatar.png"/>
+                                        </span>
                                     </div>
                                     <div className="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-anim">
                                         <ul className="kt-nav kt-margin-t-10 kt-margin-b-10">

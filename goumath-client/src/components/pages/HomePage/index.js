@@ -137,8 +137,10 @@ class HomePage extends React.Component {
                           <div className="col-lg-4 gou-filter-item">
                             <Select placeholder={t('post type')} style={{ width: '100%' }} onChange={this.handleChangeType}>
                               <Option value="null">{t('post type')}</Option>
-                              <Option value="sell">Sell</Option>
-                              <Option value="rent">Rent</Option>
+                              <Option value="sell">{t("sell")}</Option>
+                              <Option value="rent">{t("rent")}</Option>
+                              <Option value="need buy">{t("need buy")}</Option>
+                              <Option value="need rent">{t("need rent")}</Option>
                             </Select>
                           </div>
                         </div>
@@ -167,8 +169,8 @@ class HomePage extends React.Component {
                           <div className="col-lg-4 gou-filter-item">
                             <Select placeholder={t('price')} style={{ width: '100%' }} onChange={this.handleChangePrice}>
                               <Option value="null">{t('price')}</Option>
-                              <Option value="deal">Thoa thuan</Option>
-                              <Option value="lt500">less than 500 trieu</Option>
+                              <Option value="deal">{t('deal')}</Option>
+                              <Option value="lt500">{t("less than")} 500 trieu</Option>
                               <Option value="500to800"> 500 - 800 trieu</Option>
                               <Option value="800to1000"> 800 trieu - 1 ty</Option>
                               <Option value="1000to2000"> 1 - 2 ty</Option>
@@ -177,20 +179,20 @@ class HomePage extends React.Component {
                               <Option value="5000to7000"> 5 - 7 ty</Option>
                               <Option value="7000to10000"> 7 - 10 ty</Option>
                               <Option value="10000to20000"> 10 - 20 ty</Option>
-                              <Option value="gt20000"> more than 20 ty</Option>
+                              <Option value="gt20000">{t("more than")} 20 ty</Option>
                             </Select>
                           </div>
                           <div className="col-lg-4 gou-filter-item">
                             <Select placeholder={t('area')} style={{ width: '100%' }} onChange={this.handleChangeArea}>
                               <Option value="null">{t('area')}</Option>
-                              <Option value="lt30"> less than 30 m2</Option>
+                              <Option value="lt30"> {t("less than")} 30 m2</Option>
                               <Option value="30to50"> 30 - 50 m2</Option>
                               <Option value="50to80"> 50 - 80 m2</Option>
                               <Option value="80to100"> 80 - 100 m2</Option>
                               <Option value="100to150"> 100 - 150 m2</Option>
                               <Option value="150to200"> 150 - 200 m2</Option>
                               <Option value="200to300"> 200 - 300 m2</Option>
-                              <Option value="gt300"> more than 300 m2</Option>
+                              <Option value="gt300">{t("more than")} 300 m2</Option>
                             </Select>
                           </div>
                         </div>

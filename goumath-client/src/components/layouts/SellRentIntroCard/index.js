@@ -28,7 +28,7 @@ class SellRentIntroCard extends React.Component {
                         <img alt="picture" className="gou-intro-card-img" src={img_url} />
                         <div className="gou-intro-card-img-note">
                             <div className="gou-intro-card-img-note-type">{t("house for")} {t(`common:${type}`)}</div>
-                            <div className="gou-intro-card-img-note-price">${price}</div>
+                            <div className="gou-intro-card-img-note-price">${price} {type == "sell"?"VND":t("million/m2")}</div>
                         </div>
                     </div>
                     <div className="gou-intro-card-des">{title}</div>

@@ -40,7 +40,7 @@ class AdminUpdatePostPage extends React.Component {
         this.setState({
             loading: true
         })
-        axios.get(`http://localhost:8081/post/all-posts?current=${params.pagination.current}&pageSize=${params.pagination.pageSize}&type=${params.filters.type}&publish_status=${params.filters.publish_status}`).then(res => {
+        axios.get(`http://localhost:8081/post/all-posts?current=${params.pagination.current}&pageSize=${params.pagination.pageSize}&type=${params.filters.type}&publish_status=${params.filters.publish_status}&role=admin`).then(res => {
             let resData = res.data
             this.setState({
                 loading: false,

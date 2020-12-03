@@ -101,12 +101,12 @@ class StatisticPage extends React.Component {
             },
             series: [
                 {
-                    name: "a",
+                    name: "Giá/Price",
                     data: [],
                     type: 'line'
                 },
                 {
-                    name: "b",
+                    name: "Số lượng/Amount",
                     data: [],
                     type: 'bar'
                 },
@@ -129,11 +129,11 @@ class StatisticPage extends React.Component {
             series2: [
                 {
                     name: "a",
-                    data: [12, 23, 34, 45, 56, 67, 78, 89, 90]
+                    data: []
                 },
                 {
                     name: "b",
-                    data: [90, 89, 78, 56, 45, 23, 67, 89, 44]
+                    data: []
                 }
             ],
             options3: {
@@ -492,92 +492,6 @@ class StatisticPage extends React.Component {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="row">
-                                        <div className="col-12">
-                                            <div class="kt-portlet" style={{ marginTop: "25px" }}>
-                                                <div className="kt-portlet__head">
-                                                    <div className="kt-portlet__head-label">
-                                                        <h3 className="kt-portlet__head-title">3. {t('statistic:Compare prices and the amount of real estate in different districts')}</h3>
-                                                    </div>
-                                                </div>
-                                                <div className="kt-portlet__body">
-                                                    <div className="row">
-                                                        <div className="col-lg-3">
-                                                            <Select className='gou-antd-select' defaultValue="" onChange={this.handleChangeProvince3}>
-                                                                <Option value="">{t('province')}</Option>
-                                                                {provinces && provinces.map(province => { return (<Option value={province}>{province}</Option>) })}
-                                                            </Select>
-                                                        </div>
-                                                        <div className="col-lg-3">
-                                                            <Select
-                                                                mode="multiple"
-                                                                tagRender={tagRender}
-                                                                style={{ width: '100%' }}
-                                                                options={districts3}
-                                                                onChange={this.handleChangeDistricts3}
-                                                            />
-                                                        </div>
-                                                        <div className="col-lg-3">
-                                                            <Select className='gou-antd-select' defaultValue="" onChange={this.handleChangeCategory3}>
-                                                                <Option value="">{t('category')}</Option>
-                                                                <Option value="apartment">{t('common:apartment')}</Option>
-                                                                <Option value="house">{t('common:house')}</Option>
-                                                                <Option value="mansion">{t('common:mansion')}</Option>
-                                                                <Option value="town-house">{t('common:town house')}</Option>
-                                                                <Option value="ground-project">{t('common:ground project')}</Option>
-                                                                <Option value="frontage-ground">{t('common:frontage ground')}</Option>
-                                                                <Option value="warehouse">{t('common:warehouse')}</Option>
-                                                                <Option value="hotel">{t('common:hotel')}</Option>
-                                                                <Option value="store">{t('common:store')}</Option>
-                                                                <Option value="boarding-house">{t('common:boarding house')}</Option>
-                                                                <Option value="resindental-land">{t('common:resindental land')}</Option>
-                                                                <Option value="in-alley-house">{t('common:in alley house')}</Option>
-                                                                <Option value="shophouse">{t('common:shophouse')}</Option>
-                                                                <Option value="ground">{t('common:ground')}</Option>
-                                                                <Option value="office">{t('common:office')}</Option>
-                                                                <Option value="farmland">{t('common:farmland')}</Option>
-                                                            </Select>
-                                                        </div>
-                                                        <div className="col-lg-3">
-                                                            <Select defaultValue="" onChange={this.handleChangeMonth3}>
-                                                                <Option value="">{t('month')}</Option>
-                                                                <Option value={3}>3 {t('month')}</Option>
-                                                                <Option value={6}>6 {t('month')}</Option>
-                                                                <Option value={9}>9 {t('month')}</Option>
-                                                                <Option value={12}>12 {t('month')}</Option>
-                                                            </Select>
-                                                        </div>
-                                                    </div>
-                                                    <div className="row gou-type-container">
-                                                        <div class="col-lg-6">
-                                                            <div class="kt-radio-inline">
-                                                                <label class="kt-radio">
-                                                                    <input type="radio" name="type3" onChange={this.handleChangeType3} value="sell" /> {t('sell')}
-                                                                    <span></span>
-                                                                </label>
-                                                                <label class="kt-radio">
-                                                                    <input type="radio" name="type3" onChange={this.handleChangeType3} value="rent" /> {t('rent')}
-                                                                    <span></span>
-                                                                </label>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="row">
-                                                        <div class="col-lg-12">
-                                                            <div>
-                                                                <Chart
-                                                                    options={this.state.options3}
-                                                                    series={this.state.series3}
-                                                                    width="500px"
-                                                                />
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
                                 </div>
 
                             </div>

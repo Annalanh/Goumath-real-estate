@@ -4,6 +4,7 @@ class MailController {
     send(req, res){
         let { emails, name } = req.body
         sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+        console.log(emails)
 
         const msg = {
             to: emails,
@@ -14,8 +15,11 @@ class MailController {
         };
         sgMail
             .sendMultiple(msg)
-            .then(() => { }, error => {
-                console.error(error);
+            .then(() => { 
+                console.log("success")
+            })
+            .catch((err) => {
+                console.log(err)
             });
     
         res.send({ status: 1 })

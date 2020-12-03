@@ -65,7 +65,7 @@ class SignupPage extends React.Component {
                                 <div className="kt-login__container">
                                     <div className="kt-login__logo">
                                         <a href="#">
-                                            <img src="/assets/gou-icons/logo-5.png" />
+                                            <img src="/assets/gou-imgs/logo.png" style={{width: "100px", height: "100px"}}/>
                                         </a>
                                     </div>
                                     <div>
